@@ -55,6 +55,10 @@ body {
   max-width: 64rem;
 }
 
+.container.narrow {
+  max-width: 56rem;
+}
+
 *, *:before, *:after {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
