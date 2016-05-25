@@ -11,34 +11,35 @@ var albumPicasso = {
     { title: 'Pink', duration: '3:21' },
     { title: 'Magenta', duration: '2:15' }
   ]
-};
+},
+  albumMarconi = {
+    title: 'The Telephone',
+    artist: 'Guglielmo Marconi',
+    label: 'EM',
+    year: '1909',
+    albumArtUrl: 'assets/images/album_covers/20.png',
+    songs: [
+      { title: 'Hello, Operator?', duration: '1:01' },
+      { title: 'Ring, ring, ring', duration: '5:01' },
+      { title: 'Fits in Your Pocket', duration: '3:21' },
+      { title: 'Can You Hear Me Now?', duration: '3:14' },
+      { title: 'Wrong Number', duration: '2:15' }
+    ]
+  },
+  createSongRow = function (songNumber, songName, songLength) {
+    var template =
+      '<tr class="album-view-song-item">'
+    + '  <td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
+    + '  <td class="song-item-title">' + songName + '</td>'
+    + '  <td class="song-item-duration">' + songLength + '</td>'
+    + '</tr>'
+    ;
 
-var albumMarconi = {
-  title: 'The Telephone',
-  artist: 'Guglielmo Marconi',
-  label: 'EM',
-  year: '1909',
-  albumArtUrl: 'assets/images/album_covers/20.png',
-  songs: [
-    { title: 'Hello, Operator?', duration: '1:01' },
-    { title: 'Ring, ring, ring', duration: '5:01' },
-    { title: 'Fits in Your Pocket', duration: '3:21' },
-    { title: 'Can You Hear Me Now?', duration: '3:14' },
-    { title: 'Wrong Number', duration: '2:15' }
-  ]
-};
-
-var createSongRow = function (songNumber, songName, songLength) {
-  var template =
-    '<tr class="album-view-song-item">'
-  + '  <td class="song-item-number">' + songNumber + '</td>'
-  + '  <td class="song-item-title">' + songName + '</td>'
-  + '  <td class="song-item-duration">' + songLength + '</td>'
-  + '</tr>'
-  ;
-  
-  return template;
-};
+    return template;
+  },
+  songListContainer = document.getElementsByClassName('album-view-song-list')[0],
+  songRows = document.getElementsByClassName('album-view-song-item'),
+  playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
 
 var setCurrentAlbum = function (album) {
   
@@ -62,4 +63,15 @@ var setCurrentAlbum = function (album) {
 
 window.onload = function () {
   setCurrentAlbum(albumPicasso);
+  
+  for (var i = 0; i < songRows.length; i++) {
+    songRows[i].addEventListener('mouseleave', function () {
+      this.children[0].innerHTML = this.children[0].getAttribute('data-song-number');
+    });
+  }
 }
+
+songListContainer.addEventListener('mouseover', function () {
+  if (event.target.parentElement.className === 'album-view-song-item')
+    event.target.parentElement.querySelector('.song-item-number').innerHTML = playButtonTemplate;
+});
