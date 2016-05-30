@@ -95,7 +95,7 @@ var getSongItem = function(element) {
 };
 
 var clickHandler = function(targetElement) {
-  console.log('click handler')
+  
   var songItem = getSongItem(targetElement);
   
   if (currentlyPlayingSong === null) {
@@ -131,10 +131,15 @@ window.onload = function () {
 }
 
 songListContainer.addEventListener('mouseover', function (event) {
-  var songItem = getSongItem(event.target);
   
-  if (songItem.parentElement.className === 'album-view-song-item')
+  var songItem = event.target;
+  
+  if (songItem.parentElement.className === 'album-view-song-item') {
     songItem.parentElement.querySelector('.song-item-number').innerHTML = playButtonTemplate;
-    if (songItem.getAttribute('data-song-number') === currentlyPlayingSong)
-      songItem.innerHTML = pauseButtonTemplate;
+    songItem = getSongItem(event.target);
+  
+    if (songItem.getAttribute('data-song-number') !== currentlyPlayingSong) {
+      songItem.innerHTML = playButtonTemplate;
+    }
+  }
 });
