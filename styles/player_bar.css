@@ -112,9 +112,21 @@
   margin-top: -0.25rem;
   border-radius: 50%;
   cursor: pointer;
-  -webkit-transition: all 100ms ease-in-out;
-       -o-transition: all 100ms ease-in-out;
-          transition: all 100ms ease-in-out;
+  -webkit-transition:
+    width 100ms ease-in-out,
+    height 100ms ease-in-out,
+    margin-top 100ms ease-in-out,
+    margin-left 100ms ease-in-out;
+       -o-transition:
+         width 100ms ease-in-out,
+         height 100ms ease-in-out,
+         margin-top 100ms ease-in-out,
+         margin-left 100ms ease-in-out;
+          transition:
+            width 100ms ease-in-out,
+            height 100ms ease-in-out,
+            margin-top 100ms ease-in-out,
+            margin-left 100ms ease-in-out;
 }
 
 .seek-bar .fill {
@@ -124,7 +136,7 @@
   border-radius: 2px;
 }
 
-.seek-bar:hover thumb {
+.seek-bar:hover .thumb {
   width: 1.1rem;
   height: 1.1rem;
   margin-top: -0.5rem;
