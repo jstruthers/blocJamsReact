@@ -1,23 +1,30 @@
 import React, { Component } from 'react'
-import Sound from 'react-sound'
 import { connect } from 'react-redux'
 import timecode from '../helpers/timecode'
-import { setSong, playSong, pauseSong, stopSong, getSongStatus } from '../actions'
+import { setSong, playSong, pauseSong, stopSong } from '../actions'
 
 class SongListItem extends Component {
   
   constructor(props) {
     super(props)
     this.state = {
+      showIcon: false,
       icon: "",
       selected: false
     }
   }
   
   componentWillReceiveProps(nextProps) {
-    nextProps.track === this.props.song.track
-      ? this.setState({ selected: true })
-      : this.setState({ selected: false })
+    if (nextProps.track === this.props.song.track) {
+      this.setState({ selected: true, showIcon: true })
+      nextProps.playback === 'PLAYING'
+        ? this.setState({ icon: 'ion-pause song-item-button' })
+        : this.setState({ icon: 'ion-play song-item-button' })
+    } else {
+      this.setState({ selected: false, showIcon: false })
+    }
+    
+    if (!this.state.selected) { stopSong() }
   }
   
   togglePlayback() {
@@ -40,38 +47,21 @@ class SongListItem extends Component {
     }
   }
   
-  renderSound(status) {
-    let { song, songUrl, getSongStatus, stopSong } = this.props
-
-    return (
-      <Sound url={ songUrl }
-             playStatus={ Sound.status[status] }
-             onPlaying={ getSongStatus.bind(null, status) }
-             onFinishedPlaying={ stopSong } />
-    )
-  }
-  
   render() {
     
-    let { song, songUrl, playback, track } = this.props,
-        { icon, selected } = this.state
+    let { song, playback, track } = this.props,
+        { icon, showIcon, selected } = this.state
     
     return (
       <tr className="song-item"
           onClick={ this.togglePlayback.bind(this) }>
         <td className="song-item-icon">
-          { selected
-              ? (<span className={ icon }>
-                  { icon ? "" : song.track }
-                </span>)
-              : <span>{ song.track }</span>
-          }
+          <span className={ icon }>
+            { showIcon ? "" : song.track }
+          </span>
         </td>
         <td className="song-item-title">{ song.title }</td>
         <td className="song-item-duration">{ timecode(song.duration) }</td>
-        <td style={{ display: 'none' }}>
-          { selected ? this.renderSound(playback) : "" }
-        </td>
       </tr>
     )
   }
@@ -80,7 +70,6 @@ class SongListItem extends Component {
 function mapStateToProps(state) {
   return {
     playback : state.currentSong.playback,
-    songUrl : state.currentSong.data.audioUrl,
     track: state.currentSong.data.track
   }
 }
@@ -90,8 +79,7 @@ function mapDispatchToProps(dispatch) {
     setSong: (songNumber) => { dispatch( setSong(songNumber) )},
     playSong: () => { dispatch( playSong() )},
     pauseSong: () => { dispatch( pauseSong() )},
-    stopSong: () => { dispatch( stopSong() )},
-    getSongStatus: (status) => { dispatch( getSongStatus(status) )}
+    stopSong: () => { dispatch( stopSong() )}
   }
 }
 

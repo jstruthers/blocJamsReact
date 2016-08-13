@@ -7,6 +7,7 @@ export default function rootReducer (state = [], action) {
     case 'SET_CURRENT_ALBUM':
       
       newState.currentAlbum = action.album
+      newState.currentSong.data = action.album.songs[0]
       
       return {...state, ...newState}
     case 'SET_SONG':
@@ -29,6 +30,12 @@ export default function rootReducer (state = [], action) {
       newState.currentSong.playback = 'STOPPED'
       
       return {...state, ...newState}
+    case 'GET_SONG_STATUS':
+
+      newState.currentSong.volume = action.status.volume
+      newState.currentSong.position = action.status.position
+
+      return state
     case 'SEEK':
 
       return state

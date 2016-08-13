@@ -41404,6 +41404,10 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = require('react-redux');
 
+var _reactSound = require('react-sound');
+
+var _reactSound2 = _interopRequireDefault(_reactSound);
+
 var _actions = require('../actions');
 
 var _SongListItem = require('./SongListItem.jsx');
@@ -41432,14 +41436,32 @@ var Album = function (_Component) {
   }
 
   _createClass(Album, [{
-    key: 'componentWillMount',
-    value: function componentWillMount() {
-      this.props.setSong(this.props.album.songs[0]);
+    key: 'handleSongEnd',
+    value: function handleSongEnd() {
+      var _props = this.props;
+      var album = _props.album;
+      var track = _props.track;
+      var stopSong = _props.stopSong;
+      var playSong = _props.playSong;
+      var setSong = _props.setSong;
+
+
+      stopSong();
+      if (track < album.songs.length) {
+        setSong(album.songs[track]);
+        playSong();
+      }
     }
   }, {
     key: 'render',
     value: function render() {
-      var album = this.props.album;
+      var _props2 = this.props;
+      var album = _props2.album;
+      var volume = _props2.volume;
+      var playback = _props2.playback;
+      var songUrl = _props2.songUrl;
+      var stopSong = _props2.stopSong;
+      var getSongStatus = _props2.getSongStatus;
 
 
       return _react2.default.createElement(
@@ -41489,7 +41511,12 @@ var Album = function (_Component) {
             )
           )
         ),
-        _react2.default.createElement(_PlayerBar2.default, null)
+        _react2.default.createElement(_PlayerBar2.default, null),
+        _react2.default.createElement(_reactSound2.default, { url: songUrl,
+          playStatus: playback ? _reactSound2.default.status[playback] : 'STOPPED',
+          volume: volume,
+          onPlaying: getSongStatus,
+          onFinishedPlaying: this.handleSongEnd.bind(this) })
       );
     }
   }]);
@@ -41498,18 +41525,36 @@ var Album = function (_Component) {
 }(_react.Component);
 
 function mapStateToProps(state) {
-  return { album: state.currentAlbum };
+  return {
+    album: state.currentAlbum,
+    track: state.currentSong.data.track,
+    songUrl: state.currentSong.data.audioUrl,
+    playback: state.currentSong.playback,
+    volume: state.currentSong.volume,
+    position: state.currentSong.position
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return { setSong: function setSong(song) {
+  return {
+    setSong: function setSong(song) {
       dispatch((0, _actions.setSong)(song));
-    } };
+    },
+    stopSong: function stopSong() {
+      dispatch((0, _actions.stopSong)());
+    },
+    playSong: function playSong() {
+      dispatch((0, _actions.playSong)());
+    },
+    getSongStatus: function getSongStatus(status) {
+      dispatch((0, _actions.getSongStatus)(status));
+    }
+  };
 }
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Album);
 
-},{"../actions":559,"./PlayerBar.jsx":566,"./SongListItem.jsx":567,"react":543,"react-redux":355}],562:[function(require,module,exports){
+},{"../actions":559,"./PlayerBar.jsx":566,"./SongListItem.jsx":567,"react":543,"react-redux":355,"react-sound":398}],562:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41729,7 +41774,7 @@ var NavBar = function NavBar() {
 exports.default = NavBar;
 
 },{"react":543,"react-router":389}],566:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -41738,9 +41783,13 @@ exports.default = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _actions = require('../actions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41750,71 +41799,132 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Album = function (_Component) {
-  _inherits(Album, _Component);
+var PlayerBar = function (_Component) {
+  _inherits(PlayerBar, _Component);
 
-  function Album() {
-    _classCallCheck(this, Album);
+  function PlayerBar(props) {
+    _classCallCheck(this, PlayerBar);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Album).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PlayerBar).call(this, props));
+
+    _this.state = { icon: "ion-play" };
+    return _this;
   }
 
-  _createClass(Album, [{
-    key: "render",
+  _createClass(PlayerBar, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.playback === 'PLAYING') {
+        this.setState({ icon: 'ion-pause' });
+      } else if (nextProps.playback === 'PAUSED' || this.props.playback === 'STOPPED') {
+        this.setState({ icon: 'ion-play' });
+      }
+    }
+  }, {
+    key: 'togglePlayback',
+    value: function togglePlayback() {
+      var _props = this.props;
+      var playback = _props.playback;
+      var pauseSong = _props.pauseSong;
+      var playSong = _props.playSong;
+
+      if (playback === 'PLAYING') {
+        pauseSong();
+        this.setState({ icon: 'ion-pause' });
+      } else if (playback === 'PAUSED' || playback === 'STOPPED') {
+        playSong();
+        this.setState({ icon: 'ion-play' });
+      }
+    }
+  }, {
+    key: 'skip',
+    value: function skip(song, back) {
+      var _props2 = this.props;
+      var album = _props2.album;
+      var track = _props2.track;
+      var setSong = _props2.setSong;
+      var playSong = _props2.playSong;
+
+
+      if (track === 1 && back) {
+        setSong(album.songs[album.songs.length - 1]);
+        playSong();
+      } else if (track === album.songs.length && !back) {
+        setSong(album.songs[0]);
+        playSong();
+      } else {
+        setSong(song);
+        playSong();
+      }
+    }
+  }, {
+    key: 'render',
     value: function render() {
+      var _props3 = this.props;
+      var playback = _props3.playback;
+      var album = _props3.album;
+      var track = _props3.track;
+      var setSong = _props3.setSong;
+      var playSong = _props3.playSong;
+      var pauseSong = _props3.pauseSong;
+
+
       return _react2.default.createElement(
-        "section",
-        { className: "player-bar" },
+        'section',
+        { className: 'player-bar' },
         _react2.default.createElement(
-          "div",
-          { className: "container" },
+          'div',
+          { className: 'container' },
           _react2.default.createElement(
-            "div",
-            { className: "control-group main-controls" },
+            'div',
+            { className: 'control-group main-controls' },
             _react2.default.createElement(
-              "div",
-              { className: "previous" },
-              _react2.default.createElement("span", { className: "ion-skip-backward" })
+              'div',
+              { className: 'previous',
+                onClick: this.skip.bind(this, album.songs[track - 2], true) },
+              _react2.default.createElement('span', { className: 'ion-skip-backward' })
             ),
             _react2.default.createElement(
-              "div",
-              { className: "play-pause" },
-              _react2.default.createElement("span", { className: "ion-play" })
+              'div',
+              { className: 'play-pause',
+                onClick: this.togglePlayback.bind(this) },
+              _react2.default.createElement('span', { className: this.state.icon })
             ),
             _react2.default.createElement(
-              "div",
-              { className: "next" },
-              _react2.default.createElement("span", { className: "ion-skip-forward" })
+              'div',
+              { className: 'next',
+                onClick: this.skip.bind(this, album.songs[track], false) },
+              _react2.default.createElement('span', { className: 'ion-skip-forward' })
             )
           ),
           _react2.default.createElement(
-            "div",
-            { className: "control-group currently-playing" },
-            _react2.default.createElement("h2", { className: "song-name" }),
+            'div',
+            { className: 'control-group currently-playing' },
+            _react2.default.createElement('h2', { className: 'song-name' }),
             _react2.default.createElement(
-              "div",
-              { className: "seek-control" },
+              'div',
+              { className: 'seek-control' },
               _react2.default.createElement(
-                "div",
-                { className: "seek-bar" },
-                _react2.default.createElement("div", { className: "fill" }),
-                _react2.default.createElement("div", { className: "thumb" })
+                'div',
+                { className: 'seek-bar' },
+                _react2.default.createElement('div', { className: 'fill' }),
+                _react2.default.createElement('div', { className: 'thumb' })
               ),
-              _react2.default.createElement("div", { className: "current-time" }),
-              _react2.default.createElement("div", { className: "total-time" })
+              _react2.default.createElement('div', { className: 'current-time' }),
+              _react2.default.createElement('div', { className: 'total-time' })
             ),
-            _react2.default.createElement("h2", { className: "artist-song-mobile" }),
-            _react2.default.createElement("h3", { className: "artist-name" })
+            _react2.default.createElement('h2', { className: 'artist-song-mobile' }),
+            _react2.default.createElement('h3', { className: 'artist-name' })
           ),
           _react2.default.createElement(
-            "div",
-            { className: "control-group volume" },
-            _react2.default.createElement("span", { className: "ion-volume-high icon" }),
+            'div',
+            { className: 'control-group volume' },
+            _react2.default.createElement('span', { className: 'ion-volume-high icon' }),
             _react2.default.createElement(
-              "div",
-              { className: "seek-bar" },
-              _react2.default.createElement("div", { className: "fill" }),
-              _react2.default.createElement("div", { className: "thumb" })
+              'div',
+              { className: 'seek-bar' },
+              _react2.default.createElement('div', { className: 'fill' }),
+              _react2.default.createElement('div', { className: 'thumb' })
             )
           )
         )
@@ -41822,12 +41932,37 @@ var Album = function (_Component) {
     }
   }]);
 
-  return Album;
+  return PlayerBar;
 }(_react.Component);
 
-exports.default = Album;
+exports.default = PlayerBar;
 
-},{"react":543}],567:[function(require,module,exports){
+
+function mapStateToProps(state) {
+  return {
+    album: state.currentAlbum,
+    playback: state.currentSong.playback,
+    track: state.currentSong.data.track
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setSong: function setSong(songNumber) {
+      dispatch((0, _actions.setSong)(songNumber));
+    },
+    playSong: function playSong() {
+      dispatch((0, _actions.playSong)());
+    },
+    pauseSong: function pauseSong() {
+      dispatch((0, _actions.pauseSong)());
+    }
+  };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PlayerBar);
+
+},{"../actions":559,"react":543,"react-redux":355}],567:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41839,10 +41974,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
-
-var _reactSound = require('react-sound');
-
-var _reactSound2 = _interopRequireDefault(_reactSound);
 
 var _reactRedux = require('react-redux');
 
@@ -41869,6 +42000,7 @@ var SongListItem = function (_Component) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SongListItem).call(this, props));
 
     _this.state = {
+      showIcon: false,
       icon: "",
       selected: false
     };
@@ -41878,7 +42010,16 @@ var SongListItem = function (_Component) {
   _createClass(SongListItem, [{
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      nextProps.track === this.props.song.track ? this.setState({ selected: true }) : this.setState({ selected: false });
+      if (nextProps.track === this.props.song.track) {
+        this.setState({ selected: true, showIcon: true });
+        nextProps.playback === 'PLAYING' ? this.setState({ icon: 'ion-pause song-item-button' }) : this.setState({ icon: 'ion-play song-item-button' });
+      } else {
+        this.setState({ selected: false, showIcon: false });
+      }
+
+      if (!this.state.selected) {
+        (0, _actions.stopSong)();
+      }
     }
   }, {
     key: 'togglePlayback',
@@ -41908,30 +42049,15 @@ var SongListItem = function (_Component) {
       }
     }
   }, {
-    key: 'renderSound',
-    value: function renderSound(status) {
-      var _props2 = this.props;
-      var song = _props2.song;
-      var songUrl = _props2.songUrl;
-      var getSongStatus = _props2.getSongStatus;
-      var stopSong = _props2.stopSong;
-
-
-      return _react2.default.createElement(_reactSound2.default, { url: songUrl,
-        playStatus: _reactSound2.default.status[status],
-        onPlaying: getSongStatus.bind(null, status),
-        onFinishedPlaying: stopSong });
-    }
-  }, {
     key: 'render',
     value: function render() {
-      var _props3 = this.props;
-      var song = _props3.song;
-      var songUrl = _props3.songUrl;
-      var playback = _props3.playback;
-      var track = _props3.track;
+      var _props2 = this.props;
+      var song = _props2.song;
+      var playback = _props2.playback;
+      var track = _props2.track;
       var _state = this.state;
       var icon = _state.icon;
+      var showIcon = _state.showIcon;
       var selected = _state.selected;
 
 
@@ -41942,14 +42068,10 @@ var SongListItem = function (_Component) {
         _react2.default.createElement(
           'td',
           { className: 'song-item-icon' },
-          selected ? _react2.default.createElement(
+          _react2.default.createElement(
             'span',
             { className: icon },
-            icon ? "" : song.track
-          ) : _react2.default.createElement(
-            'span',
-            null,
-            song.track
+            showIcon ? "" : song.track
           )
         ),
         _react2.default.createElement(
@@ -41961,11 +42083,6 @@ var SongListItem = function (_Component) {
           'td',
           { className: 'song-item-duration' },
           (0, _timecode2.default)(song.duration)
-        ),
-        _react2.default.createElement(
-          'td',
-          { style: { display: 'none' } },
-          selected ? this.renderSound(playback) : ""
         )
       );
     }
@@ -41977,7 +42094,6 @@ var SongListItem = function (_Component) {
 function mapStateToProps(state) {
   return {
     playback: state.currentSong.playback,
-    songUrl: state.currentSong.data.audioUrl,
     track: state.currentSong.data.track
   };
 }
@@ -41995,16 +42111,13 @@ function mapDispatchToProps(dispatch) {
     },
     stopSong: function stopSong() {
       dispatch((0, _actions.stopSong)());
-    },
-    getSongStatus: function getSongStatus(status) {
-      dispatch((0, _actions.getSongStatus)(status));
     }
   };
 }
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(SongListItem);
 
-},{"../actions":559,"../helpers/timecode":568,"react":543,"react-redux":355,"react-sound":398}],568:[function(require,module,exports){
+},{"../actions":559,"../helpers/timecode":568,"react":543,"react-redux":355}],568:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42054,6 +42167,7 @@ function rootReducer() {
     case 'SET_CURRENT_ALBUM':
 
       newState.currentAlbum = action.album;
+      newState.currentSong.data = action.album.songs[0];
 
       return _extends({}, state, newState);
     case 'SET_SONG':
@@ -42076,6 +42190,12 @@ function rootReducer() {
       newState.currentSong.playback = 'STOPPED';
 
       return _extends({}, state, newState);
+    case 'GET_SONG_STATUS':
+
+      newState.currentSong.volume = action.status.volume;
+      newState.currentSong.position = action.status.position;
+
+      return state;
     case 'SEEK':
 
       return state;
@@ -42126,7 +42246,7 @@ var store = (0, _redux.createStore)(_rootReducer2.default, {
     data: null,
     volume: 80,
     playback: 'STOPPED',
-    seek: null
+    position: null
   },
   albums: [{
     title: 'The Colors',

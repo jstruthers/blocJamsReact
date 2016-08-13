@@ -16,7 +16,7 @@ const store = createStore(
       data: null,
       volume: 80,
       playback: 'STOPPED',
-      seek: null
+      position: null
     },
     albums: [
       {

@@ -1,19 +1,26 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { setSong } from '../actions'
+import Sound from 'react-sound'
+import { setSong, getSongStatus, stopSong, playSong } from '../actions'
 
 import SongListItem from './SongListItem.jsx'
 import PlayerBar from './PlayerBar.jsx'
 
 class Album extends Component {
   
-  componentWillMount() {
-    this.props.setSong(this.props.album.songs[0])
+  handleSongEnd() {
+    let { album, track, stopSong, playSong, setSong } = this.props
+
+    stopSong()
+    if (track < album.songs.length) {
+      setSong(album.songs[track])
+      playSong()
+    }
   }
   
   render() {
     
-    let { album } = this.props
+    let { album, volume, playback, songUrl, stopSong, getSongStatus } = this.props
     
     return (
       <div className="album">
@@ -49,17 +56,35 @@ class Album extends Component {
         </main>
 
         <PlayerBar />
+        
+        <Sound url={ songUrl }
+               playStatus={ playback ? Sound.status[playback] : 'STOPPED' }
+               volume={ volume }
+               onPlaying={ getSongStatus }
+               onFinishedPlaying={ this.handleSongEnd.bind(this) } />
       </div>
     )
   }
 }
 
 function mapStateToProps(state) {
-  return { album: state.currentAlbum }
+  return {
+    album: state.currentAlbum,
+    track: state.currentSong.data.track,
+    songUrl: state.currentSong.data.audioUrl,
+    playback: state.currentSong.playback,
+    volume: state.currentSong.volume,
+    position: state.currentSong.position,
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-  return { setSong: (song) => { dispatch(setSong(song) )} }
+  return {
+    setSong: (song) => { dispatch( setSong(song) )},
+    stopSong: () => { dispatch( stopSong() )},
+    playSong: () => { dispatch( playSong() )},
+    getSongStatus: (status) => { dispatch( getSongStatus(status) )}
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Album)
