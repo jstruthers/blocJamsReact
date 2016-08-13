@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+    imagemin = require('gulp-imagemin'),
     watchify = require('watchify'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
@@ -50,14 +51,24 @@ function bundle() {
 
 gulp.task('stylus', function () {
   return gulp.src('./src/stylus/app.styl')
+    .pipe(sourcemaps.init())
     .pipe(plumber())
     .pipe(stylus({
       use: [autoprefixer('iOS >= 7', 'last 1 Chrome version')]
     }))
     .pipe(plumber.stop())
     // log errors if they happen
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist/css'))
     .pipe(browserSync.stream());
+});
+
+gulp.task('images', function(){
+  return gulp.src('./src/assets/images/**/*.+(png|jpg|gif|svg)')
+  .pipe(sourcemaps.init())
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest('dist/images'))
+  .pipe(browserSync.stream());
 });
 
 gulp.task('html', function () {
@@ -67,6 +78,7 @@ gulp.task('html', function () {
 
 gulp.task('watch', function() {
   gulp.watch('src/stylus/**/*.styl', ['stylus']);
+  gulp.watch('src/assets/images/**/*.+(png|jpg|gif|svg)', ['images'])
   gulp.watch('src/index.html', ['html']);
   gulp.watch('dist/index.html').on('change', browserSync.reload);
   gulp.watch('dist/bundle.js').on('change', browserSync.reload);
@@ -84,4 +96,4 @@ gulp.task('clean', function() {
   return del('dist');
 })
 
-gulp.task('default', ['html', 'stylus', 'js', 'watch', 'serve']);
+gulp.task('default', ['html', 'stylus', 'images', 'js', 'watch', 'serve']);

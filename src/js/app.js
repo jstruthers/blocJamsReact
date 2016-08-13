@@ -1,18 +1,22 @@
 import "babel-polyfill";
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import store from './store';
-import { Provider } from 'react-redux';
+import store from './store'
+import { Provider } from 'react-redux'
+import { Router, Route, hashHistory, IndexRoute } from 'react-router'
 
-import Main from './components/Main.jsx';
+import NavBar from './components/NavBar.jsx'
+import Home from './components/Home.jsx'
+import Collection from './components/Collection.jsx'
+import Album from './components/Album.jsx'
 
 class App extends Component {
   render() {
-    const state = store.getState();
     return (
       <div className="app">
-        <Main {...state} />
+        <NavBar />
+        { this.props.children }
       </div>
     )
   }
@@ -20,7 +24,13 @@ class App extends Component {
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router history={ hashHistory }>
+      <Route path='/' component={ App }>
+        <IndexRoute component={ Home } />
+        <Route path='/collection' component={ Collection } />
+        <Route path='/album' component={ Album } />
+      </Route>
+    </Router>
   </Provider>
   ,
   document.getElementById('main')

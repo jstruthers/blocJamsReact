@@ -1,12 +1,22 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { connect } from 'react-redux'
 
-export default class Collection extends Component {
-  
-  render() {
-    return (
-      <div>
-      <section class="album-covers container clearfix"></section>
-      </div>
-    )
+import CollectionItem from './CollectionItem.jsx'
+
+const Collection = ({ albums }) => {
+  return (
+    <div className="collection">
+      <section className="album-covers container clearfix">
+        { albums.map((album, id) => <CollectionItem album={ album } key={`album${id}`} />) }
+      </section>
+    </div>
+  )
+}
+
+function mapStateToProps(state) {
+  return {
+    albums: state.albums
   }
 }
+
+export default connect(mapStateToProps, null)(Collection)
