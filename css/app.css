@@ -525,6 +525,7 @@ body.landing {
   font-size: 5rem;
 }
 .collection {
+  height: 100%;
   background-image: url("../images/blurred_backgrounds/blur_bg_2.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -540,6 +541,9 @@ body.landing {
   margin-bottom: 20px;
   text-align: center;
 }
+.collection-album-container img {
+  width: 80%;
+}
 .collection-album-container .caption {
   margin-top: 10px;
 }
@@ -548,14 +552,51 @@ body.landing {
   font-weight: 300;
   color: rgba(255,255,255,0.6);
 }
-.collection-album-container .caption p a {
-  color: rgba(255,255,255,0.6);
-}
-.collection-album-container .caption p a.album-name {
+.collection-album-container .caption .album-title {
   color: #fff;
 }
-.collection-album-container img {
-  width: 80%;
+.song-item {
+  position: relative;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+          justify-content: center;
+  -webkit-align-items: center;
+          align-items: center;
+  height: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+.song-item:hover {
+  cursor: pointer;
+  background-color: rgba(210,40,123,0.4);
+}
+.song-item-title {
+  width: 85%;
+}
+.song-item-icon,
+.song-item-duration {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+          justify-content: center;
+  -webkit-align-items: center;
+          align-items: center;
+  margin: 0 10px;
+  width: 30px;
+}
+.song-item-button {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+          justify-content: center;
+  -webkit-align-items: center;
+          align-items: center;
+  width: 30px;
+  height: 30px;
+  font-size: 1.5em;
+  background-color: #fff;
+  color: #d2287b;
+  border-radius: 50% 50%;
 }
 .album {
   background-image: url("../images/blurred_backgrounds/blur_bg_3.jpg");
@@ -567,7 +608,6 @@ body.landing {
 }
 .album-cover-art {
   position: relative;
-  left: 20%;
   margin-top: 1rem;
   width: 60%;
 }
@@ -594,38 +634,6 @@ body.landing {
   font-weight: 300;
   font-size: 0.75em;
   border-collapse: collapse;
-}
-.album-view-song-item {
-  height: 3rem;
-  border-bottom: 1px solid rgba(255,255,255,0.5);
-}
-.song-item-number {
-  width: 5%;
-  min-width: 30px;
-}
-.song-item-title {
-  width: 85%;
-}
-.song-item-duration {
-  width: 5%;
-}
-.album-song-button {
-  text-align: center;
-  font-size: 14px;
-  background-color: #fff;
-  color: #d2287b;
-  border-radius: 50% 50%;
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-}
-.album-song-button:hover {
-  cursor: pointer;
-  color: #fff;
-  background-color: #d2287b;
-}
-.album-song-button span {
-  line-height: 28px;
 }
 @media (max-width: 640px) and (min-width: 320px) {
   .album-view-details {
