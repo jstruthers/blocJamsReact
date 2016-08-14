@@ -41239,7 +41239,7 @@ exports.playSong = playSong;
 exports.pauseSong = pauseSong;
 exports.stopSong = stopSong;
 exports.getSongStatus = getSongStatus;
-exports.seek = seek;
+exports.setPosition = setPosition;
 exports.updateSeekBar = updateSeekBar;
 exports.setVolume = setVolume;
 function setCurrentAlbum(album) {
@@ -41281,10 +41281,10 @@ function getSongStatus(status) {
   };
 }
 
-function seek(time) {
+function setPosition(position) {
   return {
-    type: 'SEEK',
-    time: time
+    type: 'SET_POSITION',
+    position: position
   };
 }
 
@@ -41329,9 +41329,9 @@ var _NavBar = require('./components/NavBar.jsx');
 
 var _NavBar2 = _interopRequireDefault(_NavBar);
 
-var _Home = require('./components/Home.jsx');
+var _Landing = require('./components/Landing.jsx');
 
-var _Home2 = _interopRequireDefault(_Home);
+var _Landing2 = _interopRequireDefault(_Landing);
 
 var _Collection = require('./components/Collection.jsx');
 
@@ -41382,14 +41382,14 @@ _reactDom2.default.render(_react2.default.createElement(
     _react2.default.createElement(
       _reactRouter.Route,
       { path: '/', component: App },
-      _react2.default.createElement(_reactRouter.IndexRoute, { component: _Home2.default }),
+      _react2.default.createElement(_reactRouter.IndexRoute, { component: _Landing2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: '/collection', component: _Collection2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: '/album', component: _Album2.default })
     )
   )
 ), document.getElementById('main'));
 
-},{"./components/Album.jsx":561,"./components/Collection.jsx":562,"./components/Home.jsx":564,"./components/NavBar.jsx":565,"./store":570,"babel-polyfill":1,"react":543,"react-dom":352,"react-redux":355,"react-router":389}],561:[function(require,module,exports){
+},{"./components/Album.jsx":561,"./components/Collection.jsx":562,"./components/Landing.jsx":563,"./components/NavBar.jsx":564,"./store":567,"babel-polyfill":1,"react":543,"react-dom":352,"react-redux":355,"react-router":389}],561:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41410,11 +41410,11 @@ var _reactSound2 = _interopRequireDefault(_reactSound);
 
 var _actions = require('../actions');
 
-var _SongListItem = require('./SongListItem.jsx');
+var _SongListItem = require('../sub_components/SongListItem.jsx');
 
 var _SongListItem2 = _interopRequireDefault(_SongListItem);
 
-var _PlayerBar = require('./PlayerBar.jsx');
+var _PlayerBar = require('../sub_components/player_bar/PlayerBar.jsx');
 
 var _PlayerBar2 = _interopRequireDefault(_PlayerBar);
 
@@ -41436,14 +41436,23 @@ var Album = function (_Component) {
   }
 
   _createClass(Album, [{
-    key: 'handleSongEnd',
-    value: function handleSongEnd() {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
       var _props = this.props;
       var album = _props.album;
-      var track = _props.track;
-      var stopSong = _props.stopSong;
-      var playSong = _props.playSong;
       var setSong = _props.setSong;
+
+      setSong(album.songs[0]);
+    }
+  }, {
+    key: 'handleSongEnd',
+    value: function handleSongEnd() {
+      var _props2 = this.props;
+      var album = _props2.album;
+      var track = _props2.track;
+      var stopSong = _props2.stopSong;
+      var playSong = _props2.playSong;
+      var setSong = _props2.setSong;
 
 
       stopSong();
@@ -41455,13 +41464,14 @@ var Album = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _props2 = this.props;
-      var album = _props2.album;
-      var volume = _props2.volume;
-      var playback = _props2.playback;
-      var songUrl = _props2.songUrl;
-      var stopSong = _props2.stopSong;
-      var getSongStatus = _props2.getSongStatus;
+      var _props3 = this.props;
+      var album = _props3.album;
+      var volume = _props3.volume;
+      var position = _props3.position;
+      var playback = _props3.playback;
+      var songUrl = _props3.songUrl;
+      var stopSong = _props3.stopSong;
+      var getSongStatus = _props3.getSongStatus;
 
 
       return _react2.default.createElement(
@@ -41516,6 +41526,7 @@ var Album = function (_Component) {
           playStatus: playback ? _reactSound2.default.status[playback] : 'STOPPED',
           volume: volume,
           onPlaying: getSongStatus,
+          position: position,
           onFinishedPlaying: this.handleSongEnd.bind(this) })
       );
     }
@@ -41554,7 +41565,7 @@ function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Album);
 
-},{"../actions":559,"./PlayerBar.jsx":566,"./SongListItem.jsx":567,"react":543,"react-redux":355,"react-sound":398}],562:[function(require,module,exports){
+},{"../actions":559,"../sub_components/SongListItem.jsx":570,"../sub_components/player_bar/PlayerBar.jsx":572,"react":543,"react-redux":355,"react-sound":398}],562:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41567,7 +41578,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = require('react-redux');
 
-var _CollectionItem = require('./CollectionItem.jsx');
+var _CollectionItem = require('../sub_components/CollectionItem.jsx');
 
 var _CollectionItem2 = _interopRequireDefault(_CollectionItem);
 
@@ -41597,7 +41608,337 @@ function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Collection);
 
-},{"./CollectionItem.jsx":563,"react":543,"react-redux":355}],563:[function(require,module,exports){
+},{"../sub_components/CollectionItem.jsx":568,"react":543,"react-redux":355}],563:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _Hero = require('../sub_components/Hero.jsx');
+
+var _Hero2 = _interopRequireDefault(_Hero);
+
+var _SellingPoints = require('../sub_components/selling_points/SellingPoints.jsx');
+
+var _SellingPoints2 = _interopRequireDefault(_SellingPoints);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Landing = function (_Component) {
+  _inherits(Landing, _Component);
+
+  function Landing() {
+    _classCallCheck(this, Landing);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Landing).apply(this, arguments));
+  }
+
+  _createClass(Landing, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { className: 'landing' },
+        _react2.default.createElement(_Hero2.default, null),
+        _react2.default.createElement(_SellingPoints2.default, { points: this.props.sellingPoints })
+      );
+    }
+  }]);
+
+  return Landing;
+}(_react.Component);
+
+function mapStateToProps(state) {
+  return { sellingPoints: state.sellingPoints };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Landing);
+
+},{"../sub_components/Hero.jsx":569,"../sub_components/selling_points/SellingPoints.jsx":575,"react":543,"react-redux":355}],564:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NavBar = function NavBar() {
+  return _react2.default.createElement(
+    'nav',
+    { className: 'navbar' },
+    _react2.default.createElement(
+      _reactRouter.Link,
+      { to: '/', className: 'logo' },
+      _react2.default.createElement('img', { src: './images/bloc_jams_logo.png', alt: 'Bloc Jams Logo', className: 'logo' })
+    ),
+    _react2.default.createElement(
+      'div',
+      { className: 'links-container' },
+      _react2.default.createElement(
+        _reactRouter.Link,
+        { to: '/collection', className: 'navbar-link' },
+        'collection'
+      )
+    )
+  );
+};
+
+exports.default = NavBar;
+
+},{"react":543,"react-router":389}],565:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.timecode = timecode;
+exports.updateStyle = updateStyle;
+
+/**************************************
+*   TIMECODE
+**************************************/
+function timecode(duration) {
+  var seconds = Number.parseFloat(duration);
+
+  if (Number.isNaN(seconds)) {
+    return '-:--';
+  }
+
+  var wholeSeconds = Math.floor(seconds),
+      minutes = Math.floor(wholeSeconds / 60),
+      remainingSeconds = wholeSeconds % 60,
+      output = minutes + ':';
+
+  if (remainingSeconds < 10) {
+    output += '0';
+  }
+
+  return output + remainingSeconds;
+}
+
+/**************************************
+*   UPDATE_SEEKBAR_STYLES
+**************************************/
+
+function updateStyle(current, total) {
+
+  var seekBarFillRatio = current / total,
+      offsetXPercent = seekBarFillRatio * 100;
+
+  offsetXPercent = Math.max(0, offsetXPercent);
+  offsetXPercent = Math.min(100, offsetXPercent);
+
+  var percentageString = Math.floor(offsetXPercent) + '%';
+
+  // [ class fill, class thumb ]
+  return [{ width: percentageString }, { left: percentageString }];
+}
+
+/**************************************
+*   ANIMATE_POINTS
+**************************************/
+//
+//var animatePoints = function () {
+//
+//  function revealPoint () {
+//
+//    $(this).css({
+//      opacity: 1,
+//      transform: 'scaleX(1) translateY(0)'
+//    });
+//  }
+//
+//  $.each($('.point'), revealPoint);
+//
+//},
+//
+//  animateHero = function () {
+//
+//    $('.hero-title').css({
+//      opacity: 1,
+//      letterSpacing: '0.5rem'
+//    });
+//
+//  };
+//
+//$(window).load(function () {
+//
+//  var scrollDistance = $('.selling-points').offset().top - $(window).height() + 200;
+//
+//  animateHero();
+//
+//  if ($(window).height > 950)
+//    animatePoints();
+//
+//  $(window).scroll(function(event) {
+//    
+//    if ($(window).scrollTop() >= scrollDistance)
+//      animatePoints();
+//  });
+//});
+
+},{}],566:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.default = rootReducer;
+function rootReducer() {
+  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+  var action = arguments[1];
+
+
+  var newState = {};
+  newState.currentSong = state.currentSong;
+
+  switch (action.type) {
+    case 'SET_CURRENT_ALBUM':
+
+      newState.currentAlbum = action.album;
+      newState.currentSong.data = action.album.songs[0];
+
+      return _extends({}, state, newState);
+    case 'SET_SONG':
+
+      newState.currentSong.data = action.song;
+      console.log(action.song.duration);
+      newState.currentSong.duration = action.song.duration * 1000;
+      newState.currentSong.position = 0;
+
+      return _extends({}, state, newState);
+    case 'PLAY_SONG':
+
+      newState.currentSong.playback = 'PLAYING';
+
+      return _extends({}, state, newState);
+    case 'PAUSE_SONG':
+
+      newState.currentSong.playback = 'PAUSED';
+
+      return _extends({}, state, newState);
+    case 'STOP_SONG':
+
+      newState.currentSong.playback = 'STOPPED';
+      newState.currentSong.position = 0;
+
+      return _extends({}, state, newState);
+    case 'GET_SONG_STATUS':
+
+      newState.currentSong.volume = action.status.volume;
+      newState.currentSong.position = action.status.position;
+
+      return _extends({}, state, newState);
+    case 'SET_POSITION':
+
+      newState.currentSong.position = action.position;
+
+      return _extends({}, state, newState);
+    case 'SET_VOLUME':
+
+      newState.currentSong.volume = action.volume;
+
+      return _extends({}, state, newState);
+    default:
+      return state;
+  }
+}
+
+},{}],567:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _redux = require('redux');
+
+var _rootReducer = require('./rootReducer');
+
+var _rootReducer2 = _interopRequireDefault(_rootReducer);
+
+var _reduxLogger = require('redux-logger');
+
+var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
+
+var _reduxThunk = require('redux-thunk');
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//middleware
+var logger = (0, _reduxLogger2.default)();
+
+var middleware = [logger, _reduxThunk2.default];
+
+var store = (0, _redux.createStore)(_rootReducer2.default, {
+  sellingPoints: [{
+    icon: "ion-music-note",
+    title: "Choose your music",
+    description: "The world is full of music; why should you have to listen to music that someone else chose?"
+  }, {
+    icon: "ion-radio-waves",
+    title: "Unlimited, streaming, ad-free",
+    description: "No arbitrary limits. No distractions."
+  }, {
+    icon: "ion-iphone",
+    title: "Mobile enabled",
+    description: "Listen to your music on the go. This stream service is available on all mobile platforms."
+  }],
+  currentAlbum: null,
+  currentSong: {
+    data: null,
+    volume: 80,
+    playback: 'STOPPED',
+    position: null,
+    duration: null
+  },
+  albums: [{
+    title: 'The Colors',
+    artist: 'Pablo Picasso',
+    label: 'Cubism',
+    year: '1881',
+    albumArtUrl: './images/album_covers/01.png',
+    songs: [{ title: 'Blue', track: 1, duration: 161.71, audioUrl: './music/blue.mp3' }, { title: 'Green', track: 2, duration: 103.96, audioUrl: './music/green.mp3' }, { title: 'Red', track: 3, duration: 268.45, audioUrl: './music/red.mp3' }, { title: 'Pink', track: 4, duration: 153.14, audioUrl: './music/pink.mp3' }, { title: 'Magenta', track: 5, duration: 374.22, audioUrl: './music/magenta.mp3' }, { title: 'Cerulean', track: 6, duration: 203, audioUrl: './music/cerulean.mp3' }, { title: 'Yellow', track: 7, duration: 194, audioUrl: './music/yellow.mp3' }, { title: 'Burgundy', track: 8, duration: 251, audioUrl: './music/burgundy.mp3' }]
+  }, {
+    title: 'The Telephone',
+    artist: 'Guglielmo Marconi',
+    label: 'EM',
+    year: '1909',
+    albumArtUrl: './images/album_covers/20.png',
+    songs: [{ title: 'Hello, Operator?', track: 1, duration: '1:01' }, { title: 'Ring, ring, ring', track: 2, duration: '5:01' }, { title: 'Fits in Your Pocket', track: 3, duration: '3:21' }, { title: 'Can You Hear Me Now?', track: 4, duration: '3:14' }, { title: 'Wrong Number', track: 5, duration: '2:15' }]
+  }]
+}, _redux.applyMiddleware.apply(undefined, middleware));
+
+exports.default = store;
+
+},{"./rootReducer":566,"redux":551,"redux-logger":544,"redux-thunk":545}],568:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41655,7 +41996,7 @@ var CollectionItem = function CollectionItem(_ref) {
 
 exports.default = (0, _reactRedux.connect)()(CollectionItem);
 
-},{"../actions":559,"react":543,"react-redux":355,"react-router":389}],564:[function(require,module,exports){
+},{"../actions":559,"react":543,"react-redux":355,"react-router":389}],569:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41668,301 +42009,22 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Home = function Home() {
+var Hero = function Hero() {
+
   return _react2.default.createElement(
-    "div",
-    null,
+    "section",
+    { className: "hero-content" },
     _react2.default.createElement(
-      "section",
-      { className: "hero-content" },
-      _react2.default.createElement(
-        "h1",
-        { className: "hero-title" },
-        "Turn the music loud!"
-      )
-    ),
-    _react2.default.createElement(
-      "section",
-      { className: "selling-points container clearfix" },
-      _react2.default.createElement(
-        "div",
-        { className: "point column third" },
-        _react2.default.createElement("span", { className: "ion-music-note" }),
-        _react2.default.createElement(
-          "h5",
-          { className: "point-title" },
-          "Choose your music"
-        ),
-        _react2.default.createElement(
-          "p",
-          { className: "point-description" },
-          "The world is full of music; why should you have to listen to music that someone else chose?"
-        )
-      ),
-      _react2.default.createElement(
-        "div",
-        { className: "point column third" },
-        _react2.default.createElement("span", { className: "ion-radio-waves" }),
-        _react2.default.createElement(
-          "h5",
-          { className: "point-title" },
-          "Unlimited, streaming, ad-free"
-        ),
-        _react2.default.createElement(
-          "p",
-          { className: "point-description" },
-          "No arbitrary limits. No distractions."
-        )
-      ),
-      _react2.default.createElement(
-        "div",
-        { className: "point column third" },
-        _react2.default.createElement("span", { className: "ion-iphone" }),
-        _react2.default.createElement(
-          "h5",
-          { className: "point-title" },
-          "Mobile enabled"
-        ),
-        _react2.default.createElement(
-          "p",
-          { className: "point-description" },
-          "Listen to your music on the go. This stream service is available on all mobile platforms."
-        )
-      )
+      "h1",
+      { className: "hero-title" },
+      "Turn the music loud!"
     )
   );
 };
 
-exports.default = Home;
+exports.default = Hero;
 
-},{"react":543}],565:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRouter = require('react-router');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var NavBar = function NavBar() {
-  return _react2.default.createElement(
-    'nav',
-    { className: 'navbar' },
-    _react2.default.createElement(
-      _reactRouter.Link,
-      { to: '/', className: 'logo' },
-      _react2.default.createElement('img', { src: './images/bloc_jams_logo.png', alt: 'Bloc Jams Logo', className: 'logo' })
-    ),
-    _react2.default.createElement(
-      'div',
-      { className: 'links-container' },
-      _react2.default.createElement(
-        _reactRouter.Link,
-        { to: '/collection', className: 'navbar-link' },
-        'collection'
-      )
-    )
-  );
-};
-
-exports.default = NavBar;
-
-},{"react":543,"react-router":389}],566:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRedux = require('react-redux');
-
-var _actions = require('../actions');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var PlayerBar = function (_Component) {
-  _inherits(PlayerBar, _Component);
-
-  function PlayerBar(props) {
-    _classCallCheck(this, PlayerBar);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PlayerBar).call(this, props));
-
-    _this.state = { icon: "ion-play" };
-    return _this;
-  }
-
-  _createClass(PlayerBar, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      if (nextProps.playback === 'PLAYING') {
-        this.setState({ icon: 'ion-pause' });
-      } else if (nextProps.playback === 'PAUSED' || this.props.playback === 'STOPPED') {
-        this.setState({ icon: 'ion-play' });
-      }
-    }
-  }, {
-    key: 'togglePlayback',
-    value: function togglePlayback() {
-      var _props = this.props;
-      var playback = _props.playback;
-      var pauseSong = _props.pauseSong;
-      var playSong = _props.playSong;
-
-      if (playback === 'PLAYING') {
-        pauseSong();
-        this.setState({ icon: 'ion-pause' });
-      } else if (playback === 'PAUSED' || playback === 'STOPPED') {
-        playSong();
-        this.setState({ icon: 'ion-play' });
-      }
-    }
-  }, {
-    key: 'skip',
-    value: function skip(song, back) {
-      var _props2 = this.props;
-      var album = _props2.album;
-      var track = _props2.track;
-      var setSong = _props2.setSong;
-      var playSong = _props2.playSong;
-
-
-      if (track === 1 && back) {
-        setSong(album.songs[album.songs.length - 1]);
-        playSong();
-      } else if (track === album.songs.length && !back) {
-        setSong(album.songs[0]);
-        playSong();
-      } else {
-        setSong(song);
-        playSong();
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var _props3 = this.props;
-      var playback = _props3.playback;
-      var album = _props3.album;
-      var track = _props3.track;
-      var setSong = _props3.setSong;
-      var playSong = _props3.playSong;
-      var pauseSong = _props3.pauseSong;
-
-
-      return _react2.default.createElement(
-        'section',
-        { className: 'player-bar' },
-        _react2.default.createElement(
-          'div',
-          { className: 'container' },
-          _react2.default.createElement(
-            'div',
-            { className: 'control-group main-controls' },
-            _react2.default.createElement(
-              'div',
-              { className: 'previous',
-                onClick: this.skip.bind(this, album.songs[track - 2], true) },
-              _react2.default.createElement('span', { className: 'ion-skip-backward' })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'play-pause',
-                onClick: this.togglePlayback.bind(this) },
-              _react2.default.createElement('span', { className: this.state.icon })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'next',
-                onClick: this.skip.bind(this, album.songs[track], false) },
-              _react2.default.createElement('span', { className: 'ion-skip-forward' })
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'control-group currently-playing' },
-            _react2.default.createElement('h2', { className: 'song-name' }),
-            _react2.default.createElement(
-              'div',
-              { className: 'seek-control' },
-              _react2.default.createElement(
-                'div',
-                { className: 'seek-bar' },
-                _react2.default.createElement('div', { className: 'fill' }),
-                _react2.default.createElement('div', { className: 'thumb' })
-              ),
-              _react2.default.createElement('div', { className: 'current-time' }),
-              _react2.default.createElement('div', { className: 'total-time' })
-            ),
-            _react2.default.createElement('h2', { className: 'artist-song-mobile' }),
-            _react2.default.createElement('h3', { className: 'artist-name' })
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'control-group volume' },
-            _react2.default.createElement('span', { className: 'ion-volume-high icon' }),
-            _react2.default.createElement(
-              'div',
-              { className: 'seek-bar' },
-              _react2.default.createElement('div', { className: 'fill' }),
-              _react2.default.createElement('div', { className: 'thumb' })
-            )
-          )
-        )
-      );
-    }
-  }]);
-
-  return PlayerBar;
-}(_react.Component);
-
-exports.default = PlayerBar;
-
-
-function mapStateToProps(state) {
-  return {
-    album: state.currentAlbum,
-    playback: state.currentSong.playback,
-    track: state.currentSong.data.track
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    setSong: function setSong(songNumber) {
-      dispatch((0, _actions.setSong)(songNumber));
-    },
-    playSong: function playSong() {
-      dispatch((0, _actions.playSong)());
-    },
-    pauseSong: function pauseSong() {
-      dispatch((0, _actions.pauseSong)());
-    }
-  };
-}
-
-exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PlayerBar);
-
-},{"../actions":559,"react":543,"react-redux":355}],567:[function(require,module,exports){
+},{"react":543}],570:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41977,9 +42039,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = require('react-redux');
 
-var _timecode = require('../helpers/timecode');
-
-var _timecode2 = _interopRequireDefault(_timecode);
+var _helpers = require('../helpers');
 
 var _actions = require('../actions');
 
@@ -42070,7 +42130,7 @@ var SongListItem = function (_Component) {
           { className: 'song-item-icon' },
           _react2.default.createElement(
             'span',
-            { className: icon },
+            { className: showIcon ? icon : "" },
             showIcon ? "" : song.track
           )
         ),
@@ -42082,7 +42142,7 @@ var SongListItem = function (_Component) {
         _react2.default.createElement(
           'td',
           { className: 'song-item-duration' },
-          (0, _timecode2.default)(song.duration)
+          (0, _helpers.timecode)(song.duration)
         )
       );
     }
@@ -42117,157 +42177,453 @@ function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(SongListItem);
 
-},{"../actions":559,"../helpers/timecode":568,"react":543,"react-redux":355}],568:[function(require,module,exports){
+},{"../actions":559,"../helpers":565,"react":543,"react-redux":355}],571:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = timecode;
-function timecode(duration) {
-  var seconds = Number.parseFloat(duration);
+exports.default = undefined;
 
-  if (Number.isNaN(seconds)) {
-    return '-:--';
-  }
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  var wholeSeconds = Math.floor(seconds),
-      minutes = Math.floor(wholeSeconds / 60),
-      remainingSeconds = wholeSeconds % 60,
-      output = minutes + ':';
+var _react = require('react');
 
-  if (remainingSeconds < 10) {
-    output += '0';
-  }
-
-  output += remainingSeconds;
-
-  return output;
-}
-
-},{}],569:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-exports.default = rootReducer;
-function rootReducer() {
-  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-  var action = arguments[1];
-
-
-  var newState = {};
-  newState.currentSong = state.currentSong;
-
-  switch (action.type) {
-    case 'SET_CURRENT_ALBUM':
-
-      newState.currentAlbum = action.album;
-      newState.currentSong.data = action.album.songs[0];
-
-      return _extends({}, state, newState);
-    case 'SET_SONG':
-
-      newState.currentSong.data = action.song;
-
-      return _extends({}, state, newState);
-    case 'PLAY_SONG':
-
-      newState.currentSong.playback = 'PLAYING';
-
-      return _extends({}, state, newState);
-    case 'PAUSE_SONG':
-
-      newState.currentSong.playback = 'PAUSED';
-
-      return _extends({}, state, newState);
-    case 'STOP_SONG':
-
-      newState.currentSong.playback = 'STOPPED';
-
-      return _extends({}, state, newState);
-    case 'GET_SONG_STATUS':
-
-      newState.currentSong.volume = action.status.volume;
-      newState.currentSong.position = action.status.position;
-
-      return state;
-    case 'SEEK':
-
-      return state;
-    case 'UPDATE_SEEK_BAR':
-
-      return _extends({}, state, newState);
-    case 'SET_VOLUME':
-
-      newState.volume = action.volume;
-
-      return _extends({}, state, newState);
-    default:
-      return state;
-  }
-}
-
-},{}],570:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _redux = require('redux');
-
-var _rootReducer = require('./rootReducer');
-
-var _rootReducer2 = _interopRequireDefault(_rootReducer);
-
-var _reduxLogger = require('redux-logger');
-
-var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
-
-var _reduxThunk = require('redux-thunk');
-
-var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//middleware
-var logger = (0, _reduxLogger2.default)();
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var middleware = [logger, _reduxThunk2.default];
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var store = (0, _redux.createStore)(_rootReducer2.default, {
-  currentAlbum: null,
-  currentSong: {
-    data: null,
-    volume: 80,
-    playback: 'STOPPED',
-    position: null
-  },
-  albums: [{
-    title: 'The Colors',
-    artist: 'Pablo Picasso',
-    label: 'Cubism',
-    year: '1881',
-    albumArtUrl: './images/album_covers/01.png',
-    songs: [{ title: 'Blue', track: 1, duration: 161.71, audioUrl: './music/blue.mp3' }, { title: 'Green', track: 2, duration: 103.96, audioUrl: './music/green.mp3' }, { title: 'Red', track: 3, duration: 268.45, audioUrl: './music/red.mp3' }, { title: 'Pink', track: 4, duration: 153.14, audioUrl: './music/pink.mp3' }, { title: 'Magenta', track: 5, duration: 374.22, audioUrl: './music/magenta.mp3' }, { title: 'Cerulean', track: 6, duration: 203, audioUrl: './music/cerulean.mp3' }, { title: 'Yellow', track: 7, duration: 194, audioUrl: './music/yellow.mp3' }, { title: 'Burgundy', track: 8, duration: 251, audioUrl: './music/burgundy.mp3' }]
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MainControls = function (_Component) {
+  _inherits(MainControls, _Component);
+
+  function MainControls(props) {
+    _classCallCheck(this, MainControls);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MainControls).call(this, props));
+
+    _this.state = { icon: "ion-play" };
+    return _this;
+  }
+
+  _createClass(MainControls, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.playback === 'PLAYING') {
+        this.setState({ icon: 'ion-pause' });
+      } else if (nextProps.playback === 'PAUSED' || this.props.playback === 'STOPPED') {
+        this.setState({ icon: 'ion-play' });
+      }
+    }
   }, {
-    title: 'The Telephone',
-    artist: 'Guglielmo Marconi',
-    label: 'EM',
-    year: '1909',
-    albumArtUrl: './images/album_covers/20.png',
-    songs: [{ title: 'Hello, Operator?', track: 1, duration: '1:01' }, { title: 'Ring, ring, ring', track: 2, duration: '5:01' }, { title: 'Fits in Your Pocket', track: 3, duration: '3:21' }, { title: 'Can You Hear Me Now?', track: 4, duration: '3:14' }, { title: 'Wrong Number', track: 5, duration: '2:15' }]
-  }]
-}, _redux.applyMiddleware.apply(undefined, middleware));
+    key: 'togglePlayback',
+    value: function togglePlayback() {
+      var _props = this.props;
+      var playback = _props.playback;
+      var pauseSong = _props.pauseSong;
+      var playSong = _props.playSong;
 
-exports.default = store;
 
-},{"./rootReducer":569,"redux":551,"redux-logger":544,"redux-thunk":545}]},{},[560])
+      if (playback === 'PLAYING') {
+        pauseSong();
+        this.setState({ icon: 'ion-pause' });
+      } else if (playback === 'PAUSED' || playback === 'STOPPED') {
+        playSong();
+        this.setState({ icon: 'ion-play' });
+      }
+    }
+  }, {
+    key: 'skip',
+    value: function skip(song, back) {
+      var _props2 = this.props;
+      var album = _props2.album;
+      var track = _props2.track;
+      var setSong = _props2.setSong;
+      var playSong = _props2.playSong;
+
+
+      if (track === 1 && back) {
+        setSong(album.songs[album.songs.length - 1]);
+        playSong();
+      } else if (track === album.songs.length && !back) {
+        setSong(album.songs[0]);
+        playSong();
+      } else {
+        setSong(song);
+        playSong();
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props3 = this.props;
+      var album = _props3.album;
+      var track = _props3.track;
+
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'control-group main-controls' },
+        _react2.default.createElement(
+          'div',
+          { className: 'previous',
+            onClick: this.skip.bind(this, album.songs[track - 2], true) },
+          _react2.default.createElement('span', { className: 'ion-skip-backward' })
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'play-pause',
+            onClick: this.togglePlayback.bind(this) },
+          _react2.default.createElement('span', { className: this.state.icon })
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'next',
+            onClick: this.skip.bind(this, album.songs[track], false) },
+          _react2.default.createElement('span', { className: 'ion-skip-forward' })
+        )
+      );
+    }
+  }]);
+
+  return MainControls;
+}(_react.Component);
+
+exports.default = MainControls;
+
+},{"react":543}],572:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _helpers = require('../../helpers');
+
+var _actions = require('../../actions');
+
+var _MainControls = require('./MainControls.jsx');
+
+var _MainControls2 = _interopRequireDefault(_MainControls);
+
+var _SeekBar = require('./SeekBar.jsx');
+
+var _SeekBar2 = _interopRequireDefault(_SeekBar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PlayerBar = function PlayerBar(_ref) {
+  var playback = _ref.playback;
+  var album = _ref.album;
+  var track = _ref.track;
+  var position = _ref.position;
+  var duration = _ref.duration;
+  var volume = _ref.volume;
+  var setSong = _ref.setSong;
+  var playSong = _ref.playSong;
+  var pauseSong = _ref.pauseSong;
+
+
+  return _react2.default.createElement(
+    'section',
+    { className: 'player-bar' },
+    _react2.default.createElement(
+      'div',
+      { className: 'container' },
+      _react2.default.createElement(_MainControls2.default, {
+        playback: playback,
+        album: album,
+        track: track,
+        setSong: setSong,
+        playSong: playSong,
+        pauseSong: pauseSong }),
+      _react2.default.createElement(
+        'div',
+        { className: 'control-group currently-playing' },
+        _react2.default.createElement(
+          'h2',
+          { className: 'song-name' },
+          album.songs[track - 1].title
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'seek-control' },
+          _react2.default.createElement(_SeekBar2.default, { currentFill: position,
+            totalFill: duration,
+            setCurrentFill: _actions.setPosition }),
+          _react2.default.createElement(
+            'div',
+            { className: 'current-time' },
+            (0, _helpers.timecode)(position / 1000)
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'total-time' },
+            (0, _helpers.timecode)(album.songs[track - 1].duration)
+          )
+        ),
+        _react2.default.createElement(
+          'h2',
+          { className: 'artist-song-mobile' },
+          album.artist
+        ),
+        _react2.default.createElement(
+          'h3',
+          { className: 'artist-name' },
+          album.artist
+        )
+      ),
+      _react2.default.createElement(
+        'div',
+        { className: 'control-group volume' },
+        _react2.default.createElement('span', { className: 'ion-volume-high icon' }),
+        _react2.default.createElement(_SeekBar2.default, { currentFill: volume,
+          totalFill: 100,
+          setCurrentFill: _actions.setVolume })
+      )
+    )
+  );
+};
+
+function mapStateToProps(state) {
+  return {
+    album: state.currentAlbum,
+    playback: state.currentSong.playback,
+    track: state.currentSong.data.track,
+    position: state.currentSong.position,
+    duration: state.currentSong.duration,
+    volume: state.currentSong.volume
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setSong: function setSong(songNumber) {
+      dispatch((0, _actions.setSong)(songNumber));
+    },
+    playSong: function playSong() {
+      dispatch((0, _actions.playSong)());
+    },
+    pauseSong: function pauseSong() {
+      dispatch((0, _actions.pauseSong)());
+    }
+  };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PlayerBar);
+
+},{"../../actions":559,"../../helpers":565,"./MainControls.jsx":571,"./SeekBar.jsx":573,"react":543,"react-redux":355}],573:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _helpers = require('../../helpers');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PositionControl = function (_Component) {
+  _inherits(PositionControl, _Component);
+
+  function PositionControl(props) {
+    _classCallCheck(this, PositionControl);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PositionControl).call(this, props));
+
+    _this.state = {
+      fillStyle: null,
+      thumbStyle: null,
+      dragging: false
+    };
+    return _this;
+  }
+
+  _createClass(PositionControl, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      this.handleStyles(this.props.currentFill, this.props.totalFill);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      this.handleStyles(nextProps.currentFill, nextProps.totalFill);
+    }
+  }, {
+    key: 'handleStyles',
+    value: function handleStyles(currentFill, totalFill) {
+      var styles = (0, _helpers.updateStyle)(currentFill, totalFill);
+      this.setState({
+        fillStyle: styles[0],
+        thumbStyle: styles[1]
+      });
+    }
+  }, {
+    key: 'handleClick',
+    value: function handleClick(event) {
+      var _props = this.props;
+      var dispatch = _props.dispatch;
+      var totalFill = _props.totalFill;
+      var setCurrentFill = _props.setCurrentFill;
+
+
+      var clientRect = this._bar.getBoundingClientRect(),
+          offsetX = event.clientX - clientRect.left,
+          seekBarFillRatio = offsetX / clientRect.width;
+
+      dispatch(setCurrentFill(seekBarFillRatio * totalFill));
+    }
+    //  
+    //  handleDrag(event) {
+    //    if (this.state.dragging) {
+    //      let { dispatch, totalFill, setCurrentFill } = this.props
+    //    
+    //      let clientRect = this._thumb.getBoundingClientRect(),
+    //          offsetX = event.clientX - clientRect.left,
+    //          seekBarFillRatio = offsetX / clientRect.width
+    //console.log(clientRect, offsetX, seekBarFillRatio)
+    //      dispatch(setCurrentFill(seekBarFillRatio * totalFill))
+    //    }
+    //  }
+    //  
+    //  handleMouseDown() {
+    //    this.setState({ dragging: true })
+    //  }
+    //  
+    //  handleMouseUp() {
+    //    this.setState({ dragging: false })
+    //  }
+
+    //             ref={(c) => this._thumb = c}
+    //             onMouseDown={ this.handleMouseDown.bind(this) }
+    //             onMouseMove={ this.handleDrag.bind(this) }
+    //             onMouseUp={ this.handleMouseUp.bind(this) }
+
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'seek-bar',
+          ref: function ref(c) {
+            return _this2._bar = c;
+          },
+          onClick: this.handleClick.bind(this) },
+        _react2.default.createElement('div', { className: 'fill',
+          style: this.state.fillStyle }),
+        _react2.default.createElement('div', { className: 'thumb',
+          style: this.state.thumbStyle })
+      );
+    }
+  }]);
+
+  return PositionControl;
+}(_react.Component);
+
+exports.default = (0, _reactRedux.connect)()(PositionControl);
+
+},{"../../helpers":565,"react":543,"react-redux":355}],574:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Point = function Point(_ref) {
+  var icon = _ref.icon;
+  var title = _ref.title;
+  var description = _ref.description;
+
+
+  return _react2.default.createElement(
+    "div",
+    { className: "point column third" },
+    _react2.default.createElement("span", { className: icon }),
+    _react2.default.createElement(
+      "h5",
+      { className: "point-title" },
+      title
+    ),
+    _react2.default.createElement(
+      "p",
+      { className: "point-description" },
+      description
+    )
+  );
+};
+
+exports.default = Point;
+
+},{"react":543}],575:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Point = require('./Point.jsx');
+
+var _Point2 = _interopRequireDefault(_Point);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SellingPoints = function SellingPoints(_ref) {
+  var points = _ref.points;
+
+
+  return _react2.default.createElement(
+    'section',
+    { className: 'selling-points clearfix' },
+    points.map(function (point, id) {
+      return _react2.default.createElement(_Point2.default, {
+        key: 'point' + id,
+        icon: point.icon,
+        title: point.title,
+        description: point.description });
+    })
+  );
+};
+
+exports.default = SellingPoints;
+
+},{"./Point.jsx":574,"react":543}]},{},[560])
 
 
 //# sourceMappingURL=bundle.js.map
