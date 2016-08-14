@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import timecode from '../helpers/timecode'
+import { timecode } from '../helpers'
 import { setSong, playSong, pauseSong, stopSong } from '../actions'
 
 class SongListItem extends Component {
@@ -56,7 +56,7 @@ class SongListItem extends Component {
       <tr className="song-item"
           onClick={ this.togglePlayback.bind(this) }>
         <td className="song-item-icon">
-          <span className={ icon }>
+          <span className={ showIcon ? icon : "" }>
             { showIcon ? "" : song.track }
           </span>
         </td>

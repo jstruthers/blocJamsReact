@@ -1,5 +1,8 @@
-body.landing {
-  background-color: rgb(58, 23, 63);
+.landing {
+  background-image: url(../images/blurred_backgrounds/blur_bg_1.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
 }
 
 .hero-content {
@@ -9,50 +12,23 @@ body.landing {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  
-/* Checkpoint 22 */
-  -webkit-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
-  
-  -webkit-transition: all 0.5s ease-in-out;
-  -moz-transition: all 0.5s ease-in-out;
+
   transition: all 0.5s ease-in-out;
 }
 
 .hero-content:hover {
-  /* Checkpoint 22 */
-  -webkit-filter: grayscale(0%);
-  -o-filter: grayscale(0%);
   filter: grayscale(0%);
-  
-  -webkit-transition: all 0.5s ease-in-out;
-  -moz-transition: all 0.5s ease-in-out;
+
   transition: all 0.5s ease-in-out;
 }
 
 .hero-title {
-  /* Checkpoint 22 */
-  
-  opacity: 0;
   letter-spacing: 0;
-  
-  -webkit-transition: opacity 3s, letter-spacing 1s cubic-bezier(0, 0, 0, 1);
-  -moz-transition: opacity 3s, letter-spacing 1s cubic-bezier(0, 0, 0, 1);
-  transition: opacity 3s, letter-spacing 1s cubic-bezier(0, 0, 0, 1);
-  
-  -webkit-transition-delay: 0.2s;
-  -moz-transition-delay: 0.2s;
-  transition-delay: 0.2s;
 }
 
 .hero-content .hero-title {
   position: absolute;
   top: 40%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  -o-transform: translateY(-50%);
-  transform: translateY(-50%);
   width: 100%;
   text-align: center;
   font-size: 4em;
@@ -63,26 +39,14 @@ body.landing {
 
 .selling-points {
   position: relative;
+  background-color: hsla(0, 0, 0, 0.3);
 }
 
 .point {
   position: relative;
   padding: 2rem;
+  
   text-align: center;
-
-  opacity: 0;
-  
-  -webkit-transform: scaleX(0.9) translateY(3rem);
-  -moz-transform: scaleX(0.9) translateY(3rem);
-  transform: scaleX(0.9) translateY(3rem);
-  
-  -webkit-transition: all 0.25s ease-in-out;
-  -moz-transition: all 0.25s ease-in-out;
-  transition: all 0.25 ease-in-out;
-  
-  -webkit-transition-delay: 0.2s;
-  -moz-transition-delay: 0.2s;
-  transition-delay: 0.2s;
 }
 
 .point .point-title {

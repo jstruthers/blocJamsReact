@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import CollectionItem from './CollectionItem.jsx'
+import CollectionItem from '../sub_components/CollectionItem.jsx'
 
 const Collection = ({ albums }) => {
   return (

@@ -3,10 +3,15 @@ import { connect } from 'react-redux'
 import Sound from 'react-sound'
 import { setSong, getSongStatus, stopSong, playSong } from '../actions'
 
-import SongListItem from './SongListItem.jsx'
-import PlayerBar from './PlayerBar.jsx'
+import SongListItem from '../sub_components/SongListItem.jsx'
+import PlayerBar from '../sub_components/player_bar/PlayerBar.jsx'
 
 class Album extends Component {
+  
+  componentDidMount() {
+    let { album, setSong } = this.props
+    setSong(album.songs[0])
+  }
   
   handleSongEnd() {
     let { album, track, stopSong, playSong, setSong } = this.props
@@ -20,7 +25,7 @@ class Album extends Component {
   
   render() {
     
-    let { album, volume, playback, songUrl, stopSong, getSongStatus } = this.props
+    let { album, volume, position, playback, songUrl, stopSong, getSongStatus } = this.props
     
     return (
       <div className="album">
@@ -61,6 +66,7 @@ class Album extends Component {
                playStatus={ playback ? Sound.status[playback] : 'STOPPED' }
                volume={ volume }
                onPlaying={ getSongStatus }
+               position={ position }
                onFinishedPlaying={ this.handleSongEnd.bind(this) } />
       </div>
     )

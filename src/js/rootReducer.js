@@ -13,6 +13,9 @@ export default function rootReducer (state = [], action) {
     case 'SET_SONG':
 
       newState.currentSong.data = action.song
+      console.log(action.song.duration)
+      newState.currentSong.duration = action.song.duration * 1000
+      newState.currentSong.position = 0
       
       return {...state, ...newState}
     case 'PLAY_SONG':
@@ -28,6 +31,7 @@ export default function rootReducer (state = [], action) {
     case 'STOP_SONG':
  
       newState.currentSong.playback = 'STOPPED'
+      newState.currentSong.position = 0
       
       return {...state, ...newState}
     case 'GET_SONG_STATUS':
@@ -35,16 +39,15 @@ export default function rootReducer (state = [], action) {
       newState.currentSong.volume = action.status.volume
       newState.currentSong.position = action.status.position
 
-      return state
-    case 'SEEK':
-
-      return state
-    case 'UPDATE_SEEK_BAR':
+      return {...state, ...newState}
+    case 'SET_POSITION':
       
+      newState.currentSong.position = action.position
+
       return {...state, ...newState}
     case 'SET_VOLUME':
 
-      newState.volume = action.volume
+      newState.currentSong.volume = action.volume
       
       return {...state, ...newState}
     default:

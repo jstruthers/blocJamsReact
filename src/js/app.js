@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import { Router, Route, hashHistory, IndexRoute } from 'react-router'
 
 import NavBar from './components/NavBar.jsx'
-import Home from './components/Home.jsx'
+import Landing from './components/Landing.jsx'
 import Collection from './components/Collection.jsx'
 import Album from './components/Album.jsx'
 
@@ -26,7 +26,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={ hashHistory }>
       <Route path='/' component={ App }>
-        <IndexRoute component={ Home } />
+        <IndexRoute component={ Landing } />
         <Route path='/collection' component={ Collection } />
         <Route path='/album' component={ Album } />
       </Route>

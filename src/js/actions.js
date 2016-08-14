@@ -37,10 +37,10 @@ export function getSongStatus (status) {
   }
 }
 
-export function seek (time) {
+export function setPosition (position) {
   return {
-    type: 'SEEK',
-    time
+    type: 'SET_POSITION',
+    position
   }
 }
 
