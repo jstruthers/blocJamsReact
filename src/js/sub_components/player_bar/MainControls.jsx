@@ -47,7 +47,7 @@ export default class MainControls extends Component {
     let { album, track } = this.props
     
     return (
-      <div className="control-group main-controls">
+      <div className="main-controls">
         <div className="previous"
              onClick={
                this.skip.bind(this, album.songs[track - 2], true)

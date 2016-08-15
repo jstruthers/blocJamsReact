@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { updateStyle } from '../../helpers'
+import { updateStyle, handleClick, handleDrag } from '../../helpers'
 
 class PositionControl extends Component {
   
@@ -11,6 +11,9 @@ class PositionControl extends Component {
       thumbStyle: null,
       dragging: false
     }
+
+    this.handleDrag = handleDrag.bind(this)
+    this.handleClick = handleClick.bind(this)
   }
   
   componentWillMount() {
@@ -29,40 +32,15 @@ class PositionControl extends Component {
     })
   }
   
-  handleClick(event) {
-    let { dispatch, totalFill, setCurrentFill } = this.props
-    
-    let clientRect = this._bar.getBoundingClientRect(),
-        offsetX = event.clientX - clientRect.left,
-        seekBarFillRatio = offsetX / clientRect.width
-
-    dispatch(setCurrentFill(seekBarFillRatio * totalFill))
+  handleMouseDown() {
+    this.setState({ dragging: true })
+    document.addEventListener('mousemove', this.handleDrag)
   }
-//  
-//  handleDrag(event) {
-//    if (this.state.dragging) {
-//      let { dispatch, totalFill, setCurrentFill } = this.props
-//    
-//      let clientRect = this._thumb.getBoundingClientRect(),
-//          offsetX = event.clientX - clientRect.left,
-//          seekBarFillRatio = offsetX / clientRect.width
-//console.log(clientRect, offsetX, seekBarFillRatio)
-//      dispatch(setCurrentFill(seekBarFillRatio * totalFill))
-//    }
-//  }
-//  
-//  handleMouseDown() {
-//    this.setState({ dragging: true })
-//  }
-//  
-//  handleMouseUp() {
-//    this.setState({ dragging: false })
-//  }
   
-//             ref={(c) => this._thumb = c}
-//             onMouseDown={ this.handleMouseDown.bind(this) }
-//             onMouseMove={ this.handleDrag.bind(this) }
-//             onMouseUp={ this.handleMouseUp.bind(this) }
+  handleMouseUp() {
+    this.setState({ dragging: false })
+    document.removeEventListener('mousemove', this.handleDrag)
+  }      
   
   render() {
     return (
@@ -72,6 +50,10 @@ class PositionControl extends Component {
         <div className="fill"
              style={ this.state.fillStyle }></div>
         <div className="thumb"
+             ref={(c) => this._thumb = c}
+             onMouseDown={ this.handleMouseDown.bind(this) }
+             onMouseMove={ this.handleDrag.bind(this) }
+             onMouseUp={ this.handleMouseUp.bind(this) }
              style={ this.state.thumbStyle }></div>
       </div>
     )

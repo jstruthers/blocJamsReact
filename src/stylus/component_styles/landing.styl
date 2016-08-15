@@ -1,61 +1,50 @@
-.landing {
-  background-image: url(../images/blurred_backgrounds/blur_bg_1.jpg);
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-}
+.landing 
+  background linear-gradient(0deg, rgb(107, 45, 107), black)
 
-.hero-content {
-  position: relative;
-  min-height: 600px;
-  background-image: url(../images/bloc_jams_bg.jpg);
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-
-  transition: all 0.5s ease-in-out;
-}
-
-.hero-content:hover {
-  filter: grayscale(0%);
-
-  transition: all 0.5s ease-in-out;
-}
-
-.hero-title {
-  letter-spacing: 0;
-}
-
-.hero-content .hero-title {
-  position: absolute;
-  top: 40%;
-  width: 100%;
-  text-align: center;
-  font-size: 4em;
-  font-weight: 300;
-  text-transform: uppercase;
-  text-shadow: 1px 1px 0px rgb(58, 23, 63);
-}
-
-.selling-points {
-  position: relative;
-  background-color: hsla(0, 0, 0, 0.3);
-}
-
-.point {
-  position: relative;
-  padding: 2rem;
+.hero-content 
+  position relative
+  height 0
+  background-image url(../images/bloc_jams_bg.jpg)
+  background-repeat no-repeat
+  background-position center center
+  background-size cover
+  transition height 3s ease-in-out
   
-  text-align: center;
-}
+  .hero-title 
+    letter-spacing 10px
+    position absolute
+    top 40%
+    width 100%
+    text-align center
+    font-size 4em
+    font-weight 300
+    text-transform uppercase
+    text-shadow 1px 1px 0px rgb(58, 23, 63)
 
-.point .point-title {
-  font-size: 1.25rem;
-}
+.selling-points 
+  position relative
+  background-color hsla(0, 0, 0, 0.3)
+  transition opacity 2s
+
+.point 
+  position relative
+  padding 2rem
+  
+  text-align center
+  opacity 1
+  transition opacity 1s ease-in-out
+
+  .point-title 
+    font-size 1.25rem
+
+.show-points
+  opacity 1
+
+.hide-points
+  opacity 0
 
 .ion-music-note,
 .ion-radio-waves,
-.ion-iphone {
-  color: rgb(233, 50, 177);
-  font-size: 5rem;
-}
+.ion-iphone 
+  color rgb(233, 50, 177)
+  font-size 5rem

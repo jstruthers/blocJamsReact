@@ -40,44 +40,46 @@ export function updateStyle(current, total) {
 }
 
 /**************************************
+*   HANDLE_CLICK
+**************************************/
+
+export function handleClick(event) {
+  let { dispatch, totalFill, setCurrentFill } = this.props
+
+  let clientRect = this._bar.getBoundingClientRect(),
+      offsetX = event.clientX - clientRect.left,
+      seekBarFillRatio = offsetX / clientRect.width
+
+  dispatch(setCurrentFill(seekBarFillRatio * totalFill))
+}
+
+/**************************************
+*    HANDLE_DRAGGING
+**************************************/
+
+export function handleDrag(event) {
+  if (this.state.dragging) {
+    let { dispatch, totalFill, setCurrentFill } = this.props
+
+    let clientRect = this._bar.getBoundingClientRect(),
+        offsetX = event.clientX - clientRect.left,
+        seekBarFillRatio = offsetX / clientRect.width
+
+    dispatch(setCurrentFill(seekBarFillRatio * totalFill))
+  }
+}
+
+/**************************************
 *   ANIMATE_POINTS
 **************************************/
-//
-//var animatePoints = function () {
-//
-//  function revealPoint () {
-//
-//    $(this).css({
-//      opacity: 1,
-//      transform: 'scaleX(1) translateY(0)'
-//    });
-//  }
-//
-//  $.each($('.point'), revealPoint);
-//
-//},
-//
-//  animateHero = function () {
-//
-//    $('.hero-title').css({
-//      opacity: 1,
-//      letterSpacing: '0.5rem'
-//    });
-//
-//  };
-//
-//$(window).load(function () {
-//
-//  var scrollDistance = $('.selling-points').offset().top - $(window).height() + 200;
-//
-//  animateHero();
-//
-//  if ($(window).height > 950)
-//    animatePoints();
-//
-//  $(window).scroll(function(event) {
-//    
-//    if ($(window).scrollTop() >= scrollDistance)
-//      animatePoints();
-//  });
-//});
+
+export function revealPoints(event) {
+  let points = document.getElementsByClassName('selling-points')[0].getBoundingClientRect(),
+      scrollDistance = (screen.height - points.top) + 200;
+  console.log('screenheight', screen.height, 'points.top', points.top, 'scrollDist', scrollDistance)
+  if (screen.height > 960 || points.top >= scrollDistance) {
+    return 'hide-points'
+  } else {
+    return 'show-points'
+  }
+}
