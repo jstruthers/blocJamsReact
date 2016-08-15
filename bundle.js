@@ -41623,6 +41623,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = require('react-redux');
 
+var _helpers = require('../helpers');
+
 var _Hero = require('../sub_components/Hero.jsx');
 
 var _Hero2 = _interopRequireDefault(_Hero);
@@ -41642,20 +41644,45 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Landing = function (_Component) {
   _inherits(Landing, _Component);
 
-  function Landing() {
+  function Landing(props) {
     _classCallCheck(this, Landing);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Landing).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Landing).call(this, props));
+
+    _this.state = {
+      pointsClass: 'hide-points',
+      introStyle: { height: 0 }
+    };
+
+    _this.handleReveal = function (event) {
+      _this.setState({
+        pointsClass: (0, _helpers.revealPoints)(event)
+      });
+    };
+    return _this;
   }
 
   _createClass(Landing, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      window.addEventListener('scroll', this.handleReveal);
+      this.setState({ introStyle: { height: '600px' } });
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      window.removeEventListener('scroll', this.handleReveal);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'landing' },
-        _react2.default.createElement(_Hero2.default, null),
-        _react2.default.createElement(_SellingPoints2.default, { points: this.props.sellingPoints })
+        { className: 'landing',
+          onScroll: this.handleReveal },
+        _react2.default.createElement(_Hero2.default, { introStyle: this.state.introStyle }),
+        _react2.default.createElement(_SellingPoints2.default, { pointsClass: this.state.pointsClass,
+          points: this.props.sellingPoints })
       );
     }
   }]);
@@ -41669,7 +41696,7 @@ function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Landing);
 
-},{"../sub_components/Hero.jsx":569,"../sub_components/selling_points/SellingPoints.jsx":575,"react":543,"react-redux":355}],564:[function(require,module,exports){
+},{"../helpers":565,"../sub_components/Hero.jsx":569,"../sub_components/selling_points/SellingPoints.jsx":575,"react":543,"react-redux":355}],564:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41715,6 +41742,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.timecode = timecode;
 exports.updateStyle = updateStyle;
+exports.handleClick = handleClick;
+exports.handleDrag = handleDrag;
+exports.revealPoints = revealPoints;
 
 /**************************************
 *   TIMECODE
@@ -41757,47 +41787,57 @@ function updateStyle(current, total) {
 }
 
 /**************************************
+*   HANDLE_CLICK
+**************************************/
+
+function handleClick(event) {
+  var _props = this.props;
+  var dispatch = _props.dispatch;
+  var totalFill = _props.totalFill;
+  var setCurrentFill = _props.setCurrentFill;
+
+
+  var clientRect = this._bar.getBoundingClientRect(),
+      offsetX = event.clientX - clientRect.left,
+      seekBarFillRatio = offsetX / clientRect.width;
+
+  dispatch(setCurrentFill(seekBarFillRatio * totalFill));
+}
+
+/**************************************
+*    HANDLE_DRAGGING
+**************************************/
+
+function handleDrag(event) {
+  if (this.state.dragging) {
+    var _props2 = this.props;
+    var dispatch = _props2.dispatch;
+    var totalFill = _props2.totalFill;
+    var setCurrentFill = _props2.setCurrentFill;
+
+
+    var clientRect = this._bar.getBoundingClientRect(),
+        offsetX = event.clientX - clientRect.left,
+        seekBarFillRatio = offsetX / clientRect.width;
+
+    dispatch(setCurrentFill(seekBarFillRatio * totalFill));
+  }
+}
+
+/**************************************
 *   ANIMATE_POINTS
 **************************************/
-//
-//var animatePoints = function () {
-//
-//  function revealPoint () {
-//
-//    $(this).css({
-//      opacity: 1,
-//      transform: 'scaleX(1) translateY(0)'
-//    });
-//  }
-//
-//  $.each($('.point'), revealPoint);
-//
-//},
-//
-//  animateHero = function () {
-//
-//    $('.hero-title').css({
-//      opacity: 1,
-//      letterSpacing: '0.5rem'
-//    });
-//
-//  };
-//
-//$(window).load(function () {
-//
-//  var scrollDistance = $('.selling-points').offset().top - $(window).height() + 200;
-//
-//  animateHero();
-//
-//  if ($(window).height > 950)
-//    animatePoints();
-//
-//  $(window).scroll(function(event) {
-//    
-//    if ($(window).scrollTop() >= scrollDistance)
-//      animatePoints();
-//  });
-//});
+
+function revealPoints(event) {
+  var points = document.getElementsByClassName('selling-points')[0].getBoundingClientRect(),
+      scrollDistance = screen.height - points.top + 200;
+  console.log('screenheight', screen.height, 'points.top', points.top, 'scrollDist', scrollDistance);
+  if (screen.height > 960 || points.top >= scrollDistance) {
+    return 'hide-points';
+  } else {
+    return 'show-points';
+  }
+}
 
 },{}],566:[function(require,module,exports){
 'use strict';
@@ -41893,7 +41933,11 @@ var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //middleware
-var logger = (0, _reduxLogger2.default)();
+var logger = (0, _reduxLogger2.default)({
+  predicate: function predicate(getState, action) {
+    return action.type !== 'GET_SONG_STATUS';
+  }
+});
 
 var middleware = [logger, _reduxThunk2.default];
 
@@ -42009,11 +42053,13 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Hero = function Hero() {
+var Hero = function Hero(_ref) {
+  var introStyle = _ref.introStyle;
+
 
   return _react2.default.createElement(
     "section",
-    { className: "hero-content" },
+    { className: "hero-content", style: introStyle },
     _react2.default.createElement(
       "h1",
       { className: "hero-title" },
@@ -42268,7 +42314,7 @@ var MainControls = function (_Component) {
 
       return _react2.default.createElement(
         'div',
-        { className: 'control-group main-controls' },
+        { className: 'main-controls' },
         _react2.default.createElement(
           'div',
           { className: 'previous',
@@ -42303,6 +42349,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -42323,78 +42371,117 @@ var _SeekBar2 = _interopRequireDefault(_SeekBar);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var PlayerBar = function PlayerBar(_ref) {
-  var playback = _ref.playback;
-  var album = _ref.album;
-  var track = _ref.track;
-  var position = _ref.position;
-  var duration = _ref.duration;
-  var volume = _ref.volume;
-  var setSong = _ref.setSong;
-  var playSong = _ref.playSong;
-  var pauseSong = _ref.pauseSong;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PlayerBar = function (_Component) {
+  _inherits(PlayerBar, _Component);
+
+  function PlayerBar(props) {
+    _classCallCheck(this, PlayerBar);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PlayerBar).call(this, props));
+
+    _this.state = {
+      mute: false
+    };
+    return _this;
+  }
+
+  _createClass(PlayerBar, [{
+    key: 'toggleMute',
+    value: function toggleMute() {
+      this.setState({ mute: this.state.mute ? false : true });
+      if (this.state.mute) {
+        this.props.setVolume(this.state.prevVolume);
+      } else {
+        this.setState({ prevVolume: this.props.volume });
+        this.props.setVolume(0);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var playback = _props.playback;
+      var album = _props.album;
+      var track = _props.track;
+      var position = _props.position;
+      var duration = _props.duration;
+      var volume = _props.volume;
+      var setSong = _props.setSong;
+      var playSong = _props.playSong;
+      var pauseSong = _props.pauseSong;
 
 
-  return _react2.default.createElement(
-    'section',
-    { className: 'player-bar' },
-    _react2.default.createElement(
-      'div',
-      { className: 'container' },
-      _react2.default.createElement(_MainControls2.default, {
-        playback: playback,
-        album: album,
-        track: track,
-        setSong: setSong,
-        playSong: playSong,
-        pauseSong: pauseSong }),
-      _react2.default.createElement(
-        'div',
-        { className: 'control-group currently-playing' },
-        _react2.default.createElement(
-          'h2',
-          { className: 'song-name' },
-          album.songs[track - 1].title
-        ),
+      return _react2.default.createElement(
+        'section',
+        { className: 'player-bar' },
         _react2.default.createElement(
           'div',
-          { className: 'seek-control' },
-          _react2.default.createElement(_SeekBar2.default, { currentFill: position,
-            totalFill: duration,
-            setCurrentFill: _actions.setPosition }),
+          { className: 'control-row' },
+          _react2.default.createElement(_MainControls2.default, {
+            playback: playback,
+            album: album,
+            track: track,
+            setSong: setSong,
+            playSong: playSong,
+            pauseSong: pauseSong }),
           _react2.default.createElement(
             'div',
-            { className: 'current-time' },
-            (0, _helpers.timecode)(position / 1000)
+            { className: 'currently-playing' },
+            _react2.default.createElement(
+              'h2',
+              { className: 'song-name' },
+              album.songs[track - 1].title
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'seek-control' },
+              _react2.default.createElement(_SeekBar2.default, { currentFill: position,
+                totalFill: duration,
+                setCurrentFill: _actions.setPosition }),
+              _react2.default.createElement(
+                'div',
+                { className: 'current-time' },
+                (0, _helpers.timecode)(position / 1000)
+              ),
+              _react2.default.createElement(
+                'div',
+                { className: 'total-time' },
+                (0, _helpers.timecode)(album.songs[track - 1].duration)
+              )
+            ),
+            _react2.default.createElement(
+              'h2',
+              { className: 'artist-song-mobile' },
+              album.artist + ' - ' + album.songs[track - 1].title
+            ),
+            _react2.default.createElement(
+              'h3',
+              { className: 'artist-name' },
+              album.artist
+            )
           ),
           _react2.default.createElement(
             'div',
-            { className: 'total-time' },
-            (0, _helpers.timecode)(album.songs[track - 1].duration)
+            { className: 'volume' },
+            _react2.default.createElement('span', { className: this.state.mute ? "ion-android-volume-off icon" : "ion-volume-high icon",
+              onClick: this.toggleMute.bind(this) }),
+            _react2.default.createElement(_SeekBar2.default, { currentFill: volume,
+              totalFill: 100,
+              setCurrentFill: _actions.setVolume })
           )
-        ),
-        _react2.default.createElement(
-          'h2',
-          { className: 'artist-song-mobile' },
-          album.artist
-        ),
-        _react2.default.createElement(
-          'h3',
-          { className: 'artist-name' },
-          album.artist
         )
-      ),
-      _react2.default.createElement(
-        'div',
-        { className: 'control-group volume' },
-        _react2.default.createElement('span', { className: 'ion-volume-high icon' }),
-        _react2.default.createElement(_SeekBar2.default, { currentFill: volume,
-          totalFill: 100,
-          setCurrentFill: _actions.setVolume })
-      )
-    )
-  );
-};
+      );
+    }
+  }]);
+
+  return PlayerBar;
+}(_react.Component);
 
 function mapStateToProps(state) {
   return {
@@ -42417,6 +42504,9 @@ function mapDispatchToProps(dispatch) {
     },
     pauseSong: function pauseSong() {
       dispatch((0, _actions.pauseSong)());
+    },
+    setVolume: function setVolume(volume) {
+      dispatch((0, _actions.setVolume)(volume));
     }
   };
 }
@@ -42461,6 +42551,9 @@ var PositionControl = function (_Component) {
       thumbStyle: null,
       dragging: false
     };
+
+    _this.handleDrag = _helpers.handleDrag.bind(_this);
+    _this.handleClick = _helpers.handleClick.bind(_this);
     return _this;
   }
 
@@ -42484,46 +42577,17 @@ var PositionControl = function (_Component) {
       });
     }
   }, {
-    key: 'handleClick',
-    value: function handleClick(event) {
-      var _props = this.props;
-      var dispatch = _props.dispatch;
-      var totalFill = _props.totalFill;
-      var setCurrentFill = _props.setCurrentFill;
-
-
-      var clientRect = this._bar.getBoundingClientRect(),
-          offsetX = event.clientX - clientRect.left,
-          seekBarFillRatio = offsetX / clientRect.width;
-
-      dispatch(setCurrentFill(seekBarFillRatio * totalFill));
+    key: 'handleMouseDown',
+    value: function handleMouseDown() {
+      this.setState({ dragging: true });
+      document.addEventListener('mousemove', this.handleDrag);
     }
-    //  
-    //  handleDrag(event) {
-    //    if (this.state.dragging) {
-    //      let { dispatch, totalFill, setCurrentFill } = this.props
-    //    
-    //      let clientRect = this._thumb.getBoundingClientRect(),
-    //          offsetX = event.clientX - clientRect.left,
-    //          seekBarFillRatio = offsetX / clientRect.width
-    //console.log(clientRect, offsetX, seekBarFillRatio)
-    //      dispatch(setCurrentFill(seekBarFillRatio * totalFill))
-    //    }
-    //  }
-    //  
-    //  handleMouseDown() {
-    //    this.setState({ dragging: true })
-    //  }
-    //  
-    //  handleMouseUp() {
-    //    this.setState({ dragging: false })
-    //  }
-
-    //             ref={(c) => this._thumb = c}
-    //             onMouseDown={ this.handleMouseDown.bind(this) }
-    //             onMouseMove={ this.handleDrag.bind(this) }
-    //             onMouseUp={ this.handleMouseUp.bind(this) }
-
+  }, {
+    key: 'handleMouseUp',
+    value: function handleMouseUp() {
+      this.setState({ dragging: false });
+      document.removeEventListener('mousemove', this.handleDrag);
+    }
   }, {
     key: 'render',
     value: function render() {
@@ -42539,6 +42603,12 @@ var PositionControl = function (_Component) {
         _react2.default.createElement('div', { className: 'fill',
           style: this.state.fillStyle }),
         _react2.default.createElement('div', { className: 'thumb',
+          ref: function ref(c) {
+            return _this2._thumb = c;
+          },
+          onMouseDown: this.handleMouseDown.bind(this),
+          onMouseMove: this.handleDrag.bind(this),
+          onMouseUp: this.handleMouseUp.bind(this),
           style: this.state.thumbStyle })
       );
     }
@@ -42566,11 +42636,12 @@ var Point = function Point(_ref) {
   var icon = _ref.icon;
   var title = _ref.title;
   var description = _ref.description;
+  var show = _ref.show;
 
 
   return _react2.default.createElement(
     "div",
-    { className: "point column third" },
+    { className: "point column third " + show },
     _react2.default.createElement("span", { className: icon }),
     _react2.default.createElement(
       "h5",
@@ -42594,6 +42665,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -42604,22 +42677,40 @@ var _Point2 = _interopRequireDefault(_Point);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var SellingPoints = function SellingPoints(_ref) {
-  var points = _ref.points;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-  return _react2.default.createElement(
-    'section',
-    { className: 'selling-points clearfix' },
-    points.map(function (point, id) {
-      return _react2.default.createElement(_Point2.default, {
-        key: 'point' + id,
-        icon: point.icon,
-        title: point.title,
-        description: point.description });
-    })
-  );
-};
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SellingPoints = function (_Component) {
+  _inherits(SellingPoints, _Component);
+
+  function SellingPoints() {
+    _classCallCheck(this, SellingPoints);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(SellingPoints).apply(this, arguments));
+  }
+
+  _createClass(SellingPoints, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'section',
+        { className: this.props.pointsClass + ' selling-points clearfix' },
+        this.props.points.map(function (point, id) {
+          return _react2.default.createElement(_Point2.default, {
+            key: 'point' + id,
+            icon: point.icon,
+            title: point.title,
+            description: point.description });
+        })
+      );
+    }
+  }]);
+
+  return SellingPoints;
+}(_react.Component);
 
 exports.default = SellingPoints;
 
