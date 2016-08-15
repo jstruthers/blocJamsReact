@@ -41592,7 +41592,7 @@ var Collection = function Collection(_ref) {
     { className: 'collection' },
     _react2.default.createElement(
       'section',
-      { className: 'album-covers container clearfix' },
+      { className: 'album-covers clearfix' },
       albums.map(function (album, id) {
         return _react2.default.createElement(_CollectionItem2.default, { album: album, key: 'album' + id });
       })
@@ -41650,8 +41650,7 @@ var Landing = function (_Component) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Landing).call(this, props));
 
     _this.state = {
-      pointsClass: 'hide-points',
-      introStyle: { height: 0 }
+      pointsClass: 'hide-points'
     };
 
     _this.handleReveal = function (event) {
@@ -41666,7 +41665,6 @@ var Landing = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       window.addEventListener('scroll', this.handleReveal);
-      this.setState({ introStyle: { height: '600px' } });
     }
   }, {
     key: 'componentWillUnmount',
@@ -41680,7 +41678,15 @@ var Landing = function (_Component) {
         'div',
         { className: 'landing',
           onScroll: this.handleReveal },
-        _react2.default.createElement(_Hero2.default, { introStyle: this.state.introStyle }),
+        _react2.default.createElement(
+          'section',
+          { className: 'hero-content' },
+          _react2.default.createElement(
+            'h1',
+            { className: 'hero-title' },
+            'Turn the music loud!'
+          )
+        ),
         _react2.default.createElement(_SellingPoints2.default, { pointsClass: this.state.pointsClass,
           points: this.props.sellingPoints })
       );
@@ -41831,7 +41837,6 @@ function handleDrag(event) {
 function revealPoints(event) {
   var points = document.getElementsByClassName('selling-points')[0].getBoundingClientRect(),
       scrollDistance = screen.height - points.top + 200;
-  console.log('screenheight', screen.height, 'points.top', points.top, 'scrollDist', scrollDistance);
   if (screen.height > 960 || points.top >= scrollDistance) {
     return 'hide-points';
   } else {
@@ -41867,7 +41872,6 @@ function rootReducer() {
     case 'SET_SONG':
 
       newState.currentSong.data = action.song;
-      console.log(action.song.duration);
       newState.currentSong.duration = action.song.duration * 1000;
       newState.currentSong.position = 0;
 
@@ -41945,15 +41949,15 @@ var store = (0, _redux.createStore)(_rootReducer2.default, {
   sellingPoints: [{
     icon: "ion-music-note",
     title: "Choose your music",
-    description: "The world is full of music; why should you have to listen to music that someone else chose?"
+    description: ["The world is full of music;", "Why should you have to listen to music that someone else chose?"]
   }, {
     icon: "ion-radio-waves",
     title: "Unlimited, streaming, ad-free",
-    description: "No arbitrary limits. No distractions."
+    description: ["No arbitrary limits. No distractions."]
   }, {
     icon: "ion-iphone",
     title: "Mobile enabled",
-    description: "Listen to your music on the go. This stream service is available on all mobile platforms."
+    description: ["Listen to your music on the go.", "This stream service is available on all mobile platforms."]
   }],
   currentAlbum: null,
   currentSong: {
@@ -41977,6 +41981,76 @@ var store = (0, _redux.createStore)(_rootReducer2.default, {
     year: '1909',
     albumArtUrl: './images/album_covers/20.png',
     songs: [{ title: 'Hello, Operator?', track: 1, duration: '1:01' }, { title: 'Ring, ring, ring', track: 2, duration: '5:01' }, { title: 'Fits in Your Pocket', track: 3, duration: '3:21' }, { title: 'Can You Hear Me Now?', track: 4, duration: '3:14' }, { title: 'Wrong Number', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album III',
+    artist: 'Artist Three',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/14.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album IV',
+    artist: 'Artist Four',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/04.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album V',
+    artist: 'Artist Five',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/05.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album VI',
+    artist: 'Artist Six',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/06.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album VII',
+    artist: 'Artist Seven',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/07.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album VIII',
+    artist: 'Artist Eight',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/13.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album IX',
+    artist: 'Artist Nine',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/09.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album X',
+    artist: 'Artist Ten',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/10.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album XI',
+    artist: 'Artist Eleven',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/11.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
+  }, {
+    title: 'Album XII',
+    artist: 'Artist Twelve',
+    label: 'The Labelist',
+    year: '1989',
+    albumArtUrl: './images/album_covers/18.png',
+    songs: [{ title: 'Track 1', track: 1, duration: '1:01' }, { title: 'Track 2', track: 2, duration: '5:01' }, { title: 'Track 3', track: 3, duration: '3:21' }, { title: 'Track 4', track: 4, duration: '3:14' }, { title: 'Track 5', track: 5, duration: '2:15' }]
   }]
 }, _redux.applyMiddleware.apply(undefined, middleware));
 
@@ -41988,6 +42062,8 @@ exports.default = store;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -42001,42 +42077,86 @@ var _actions = require('../actions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var CollectionItem = function CollectionItem(_ref) {
-  var album = _ref.album;
-  var dispatch = _ref.dispatch;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  return _react2.default.createElement(
-    'div',
-    { className: 'collection-album-container column fourth' },
-    _react2.default.createElement(
-      _reactRouter.Link,
-      { to: '/album',
-        onClick: dispatch.bind(null, (0, _actions.setCurrentAlbum)(album)) },
-      _react2.default.createElement('img', { src: album.albumArtUrl, className: 'album-cover-art', alt: 'album cover' })
-    ),
-    _react2.default.createElement(
-      'div',
-      { className: 'collection-album-info caption' },
-      _react2.default.createElement(
-        'p',
-        null,
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var CollectionItem = function (_Component) {
+  _inherits(CollectionItem, _Component);
+
+  function CollectionItem(props) {
+    _classCallCheck(this, CollectionItem);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CollectionItem).call(this, props));
+
+    _this.state = {
+      hovered: ''
+    };
+    return _this;
+  }
+
+  _createClass(CollectionItem, [{
+    key: 'handleMouseOver',
+    value: function handleMouseOver() {
+      this.setState({ hovered: 'album-hovered' });
+    }
+  }, {
+    key: 'handleMouseOut',
+    value: function handleMouseOut() {
+      this.setState({ hovered: '' });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props;
+      var album = _props.album;
+      var dispatch = _props.dispatch;
+
+
+      return _react2.default.createElement(
+        'div',
+        { className: this.state.hovered + ' collection-album-container column fourth',
+          onMouseOver: this.handleMouseOver.bind(this),
+          onMouseOut: this.handleMouseOut.bind(this) },
         _react2.default.createElement(
           _reactRouter.Link,
-          { className: 'album-title',
-            to: '/album',
-            onClick: dispatch.bind(null, (0, _actions.setCurrentAlbum)(album)) },
-          album.title
+          { to: '/album',
+            onClick: dispatch.bind(null, (0, _actions.setCurrentAlbum)(album)),
+            onMouseOver: this.handleMouseOver.bind(this),
+            onMouseOut: this.handleMouseOut.bind(this) },
+          _react2.default.createElement('img', { src: album.albumArtUrl,
+            className: 'album-cover-art',
+            alt: album.title + ' cover art' })
         ),
-        _react2.default.createElement('br', null),
-        album.artist,
-        _react2.default.createElement('br', null),
-        album.songs.length,
-        ' songs',
-        _react2.default.createElement('br', null)
-      )
-    )
-  );
-};
+        _react2.default.createElement(
+          'div',
+          { className: 'collection-album-info caption' },
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { className: 'album-title',
+                to: '/album',
+                onClick: dispatch.bind(null, (0, _actions.setCurrentAlbum)(album)) },
+              album.title
+            ),
+            _react2.default.createElement('br', null),
+            album.artist,
+            _react2.default.createElement('br', null),
+            album.songs.length,
+            ' songs',
+            _react2.default.createElement('br', null)
+          )
+        )
+      );
+    }
+  }]);
+
+  return CollectionItem;
+}(_react.Component);
 
 exports.default = (0, _reactRedux.connect)()(CollectionItem);
 
@@ -42651,7 +42771,18 @@ var Point = function Point(_ref) {
     _react2.default.createElement(
       "p",
       { className: "point-description" },
-      description
+      description.map(function (sentence, key) {
+        return _react2.default.createElement(
+          "span",
+          { key: "point" + key },
+          _react2.default.createElement(
+            "span",
+            null,
+            sentence
+          ),
+          _react2.default.createElement("br", null)
+        );
+      })
     )
   );
 };

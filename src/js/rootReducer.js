@@ -13,7 +13,6 @@ export default function rootReducer (state = [], action) {
     case 'SET_SONG':
 
       newState.currentSong.data = action.song
-      console.log(action.song.duration)
       newState.currentSong.duration = action.song.duration * 1000
       newState.currentSong.position = 0
       

@@ -10,8 +10,7 @@ class Landing extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      pointsClass: 'hide-points',
-      introStyle: { height: 0 }
+      pointsClass: 'hide-points'
     }
     
     this.handleReveal = (event) => {
@@ -23,7 +22,6 @@ class Landing extends Component {
   
   componentDidMount() {
     window.addEventListener('scroll', this.handleReveal)
-    this.setState({ introStyle: { height: '600px' } })
   }
   
   componentWillUnmount() {
@@ -34,7 +32,9 @@ class Landing extends Component {
     return (
       <div className="landing"
            onScroll={ this.handleReveal }>
-        <Hero introStyle={ this.state.introStyle } />
+        <section className="hero-content">
+          <h1 className="hero-title">Turn the music loud!</h1>
+        </section>
         <SellingPoints pointsClass={ this.state.pointsClass }
                        points={ this.props.sellingPoints } />
       </div>

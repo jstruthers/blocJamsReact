@@ -76,7 +76,6 @@ export function handleDrag(event) {
 export function revealPoints(event) {
   let points = document.getElementsByClassName('selling-points')[0].getBoundingClientRect(),
       scrollDistance = (screen.height - points.top) + 200;
-  console.log('screenheight', screen.height, 'points.top', points.top, 'scrollDist', scrollDistance)
   if (screen.height > 960 || points.top >= scrollDistance) {
     return 'hide-points'
   } else {

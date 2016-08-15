@@ -17,17 +17,17 @@ const store = createStore(
       {
         icon: "ion-music-note",
         title: "Choose your music",
-        description: "The world is full of music; why should you have to listen to music that someone else chose?",
+        description: ["The world is full of music;", "Why should you have to listen to music that someone else chose?"]
       },
       {
         icon: "ion-radio-waves",
         title: "Unlimited, streaming, ad-free",
-        description: "No arbitrary limits. No distractions.",
+        description: ["No arbitrary limits. No distractions."]
       },
       {
         icon: "ion-iphone",
         title: "Mobile enabled",
-        description: "Listen to your music on the go. This stream service is available on all mobile platforms.",
+        description: ["Listen to your music on the go.", "This stream service is available on all mobile platforms."]
       }
     ],
     currentAlbum : null,
@@ -69,7 +69,147 @@ const store = createStore(
           { title: 'Can You Hear Me Now?', track: 4, duration: '3:14' },
           { title: 'Wrong Number', track: 5, duration: '2:15' }
         ]
-      }
+      },
+      {
+        title: 'Album III',
+        artist: 'Artist Three',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/14.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album IV',
+        artist: 'Artist Four',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/04.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album V',
+        artist: 'Artist Five',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/05.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album VI',
+        artist: 'Artist Six',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/06.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album VII',
+        artist: 'Artist Seven',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/07.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album VIII',
+        artist: 'Artist Eight',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/13.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album IX',
+        artist: 'Artist Nine',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/09.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album X',
+        artist: 'Artist Ten',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/10.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album XI',
+        artist: 'Artist Eleven',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/11.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
+      {
+        title: 'Album XII',
+        artist: 'Artist Twelve',
+        label: 'The Labelist',
+        year: '1989',
+        albumArtUrl: './images/album_covers/18.png',
+        songs: [
+          { title: 'Track 1', track: 1, duration: '1:01' },
+          { title: 'Track 2', track: 2, duration: '5:01' },
+          { title: 'Track 3', track: 3, duration: '3:21' },
+          { title: 'Track 4', track: 4, duration: '3:14' },
+          { title: 'Track 5', track: 5, duration: '2:15' }
+        ]
+      },
     ]
   },
   applyMiddleware(...middleware)

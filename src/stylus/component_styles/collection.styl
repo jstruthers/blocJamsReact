@@ -1,28 +1,48 @@
 .collection
   height 100%
-  background linear-gradient(0deg, rgb(107, 45, 107), black)
-
 
 .album-covers 
   position relative
+  display flex
+  justify-content space-around
+  flex-wrap wrap
+  background linear-gradient(0deg, rgb(107, 45, 107), black)
+  background-position center center
+  background-repeat no-repeat
+  background-attachment fixed
 
+.album-hovered
+  a img
+    width 83%
+    transition all 0.1s ease
+  .caption p .album-title
+    font-weight 300
+    color white
 
 .collection-album-container 
   position relative
-  margin-top 30px
-  margin-bottom 20px
+  margin-top 3%
+  margin-bottom 2%
+  height 40%
   text-align center
    
   img 
-    width 80%
+    min-width 80%
+    box-shadow 5px 5px 10px rgba(0, 0, 0, 0.85)
+    &:hover
+      cursor pointer
 
   .caption 
     margin-top 10px
     
     p 
-      font-size 1rem
+      font-size 0.8rem
       font-weight 300
       color rgba(255, 255, 255, 0.6)
 
     .album-title 
-      color white
+      font-size 1rem
+      color rgb(137, 75, 137)
+      text-decoration none
+      &:hover
+        cursor pointer
